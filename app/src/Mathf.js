@@ -47,7 +47,11 @@ function FormatEngineering(number, places){
 }
 
 function FormatLetters(number, places){
-    return "TODO";
+    if (number.lt(100)) return number.toFixed(places);
+
+    var index = Math.floor(Math.log10(number)/3);
+    var number = Decimal.div(number, Decimal.pow(1000, index));
+    return number.toFixed(places) + IndexToLetter(index);
 }
 
 function FormatLogarithm(number, places){
@@ -70,6 +74,17 @@ function FormatDefault(number, places){
 
     var number = Decimal.div(number, Decimal.pow(1000, index));
     return number.toFixed(places) + numberNames[index];
+}
+
+function IndexToLetter(index) {
+    let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let letter = "";
+    while (index > 0) {
+        let remainder = index % 26;
+        letter = letters[remainder] + letter;
+        index = (index - remainder) / 26;
+    }
+    return letter;
 }
 
 export function FormatTimeLong(seconds){
