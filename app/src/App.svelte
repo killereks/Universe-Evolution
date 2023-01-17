@@ -129,14 +129,14 @@
 
 	<script src="https://cdn.tailwindcss.com"></script>
 
-	<div class="ui segment">
+	<!-- <div class="ui segment">
 		<div class="ui block header">CHEATS</div>
 		<div class="ui input labeled big">
 			<div class="ui label">Game Speed</div>
 			<input bind:value={game_speed} type="number">
 		</div>
 		<button class="ui button" on:click={EraPrestige}>Next era</button>
-	</div>
+	</div> -->
 
 	<div class="notifications"></div>
 
