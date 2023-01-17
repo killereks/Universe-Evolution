@@ -36,17 +36,19 @@
 	function TimeTick(tick){
 		$player.timePlayed += tick;
 
+		document.title = Format($player.resources.money.amount) + " - " + allAges[$player.currentAge];
+
 		PeopleTick();
 		MoneyTick();
 
 		WorkersTick(tick);
 
-		CheckUnlocks();
-
 		ResourceTick($player.resources.people, tick);
 		ResourceTick($player.resources.money, tick);
 		ResourceTick($player.resources.food, tick);
 	}
+
+	setInterval(CheckUnlocks, 1000);
 
 	function PeopleTick(){
 		var foodBonus = Decimal.log($player.resources.food.amount.add(1), 3);
@@ -77,7 +79,12 @@
 	}
 
 	function CheckUnlocks(){
-		
+		if (!$player.resources.food.unlocked){
+			if ($player.resources.money.amount.gte(10)){
+				$player.resources.food.unlocked = true;
+				$player.menuTabs.government.unlocked = true;
+			}
+		}
 	}
 
 	function OpenMenu(name){
@@ -113,7 +120,7 @@
 			<MenuItem on:click={() => OpenMenu("Upgrades")} title="🔧 Upgrades" unlocked={$player.menuTabs.upgrades}/>
 
 			<div class="right menu">
-				<MenuItem title="🏆 Achievements" unlocked={true} on:click={() => OpenMenu("Achievements")}/>
+				<MenuItem title="🏆 Achievements" unlocked={$player.menuTabs.achievements} on:click={() => OpenMenu("Achievements")}/>
 				<MenuItem title="⚙️ Settings" unlocked={true} on:click={() => OpenMenu("Settings")}/>
 				<a class="item">Played for {FormatTimeShort($player.timePlayed)}</a>
 			</div>

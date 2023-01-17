@@ -8,7 +8,7 @@ const defaultPlayer = {
 
 	lastSaved: 0,
 
-	menu: "Government",
+	menu: "",
 
 	currentAge: 0,
 
@@ -19,8 +19,8 @@ const defaultPlayer = {
 		military: false,
 		research: false,
 		trade: false,
-		government: true,
-		achievements: true,
+		government: false,
+		achievements: false,
 	},
 
 	workers: {
@@ -56,10 +56,10 @@ const defaultPlayer = {
 		},
 		food: {
 			icon: "🍲",
-			amount: new Decimal(10),
+			amount: new Decimal(0),
 			amountMax: new Decimal(100),
 			perSecond: new Decimal(0),
-			unlocked: true,
+			unlocked: false,
 		},
 		wood: {
 			icon: "🌲",
