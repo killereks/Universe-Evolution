@@ -1,6 +1,6 @@
 <script>
 
-    import { fade } from 'svelte/transition';
+    import { fly } from 'svelte/transition';
 
     export let title = "No Title";
     export let notificationCount = 0;
@@ -8,15 +8,11 @@
 
 </script>
 
-<style>
-    .hidden {
-        display: none !important;
-    }
-</style>
-
-<a on:click transition:fade class={`item ${!unlocked && "hidden"}`}>
-    {title}
+{#if unlocked}
+<a transition:fly={{y: 50, duration: 1000}} on:click class="item">
+    <p>{title}</p>
     {#if notificationCount > 0}
         <div class="ui red label floating">{notificationCount}</div>
     {/if}
 </a>
+{/if}

@@ -103,6 +103,9 @@ const defaultPlayer = {
 			perSecond: new Decimal(0),
 			unlocked: true,
 		}
+	},
+	settings: {
+		format: "default",
 	}
 };
 

@@ -14,6 +14,7 @@
 
 	import { player } from './stores/player.js';
     import { FoodProduction } from './javascript/Production';
+    import Notification from './Components/Notification.svelte';
 
 	const allAges = ["Prehistoric","Ancient","Classical","Medieval","Renaissance","Industrial","Modern",
 					"Post-modern","Futuristic","Space Colonization","Post-Singularity","Transhumanism",
@@ -51,7 +52,7 @@
 	setInterval(CheckUnlocks, 1000);
 
 	function PeopleTick(){
-		var foodBonus = Decimal.log($player.resources.food.amount.add(1), 3);
+		var foodBonus = Decimal.log10($player.resources.food.amount.add(1), 3);
 		$player.resources.people.perSecond = $player.resources.people.amount.mul(0.01).mul(foodBonus);
 	}
 
@@ -82,13 +83,20 @@
 		if (!$player.resources.food.unlocked){
 			if ($player.resources.money.amount.gte(10)){
 				$player.resources.food.unlocked = true;
-				$player.menuTabs.government.unlocked = true;
+				$player.menuTabs.government = true;
+				CreateNotification("Unlocked government tab!", "orange");
+				CreateNotification("Unlocked food!", "green");
 			}
 		}
 	}
 
 	function OpenMenu(name){
 		$player.menu = name;
+	}
+
+	function CreateNotification(title, color="yellow"){
+		let notif = new Notification({target: document.querySelector('.notifications'), props: {title: title, color: color}});
+		setTimeout(() => notif.$destroy(), 4000);
 	}
 </script>
 
@@ -107,6 +115,13 @@
 		<div class="ui label">Game Speed</div>
 		<input bind:value={game_speed} type="number">
 	</div>
+
+	<button on:click={() => CreateNotification("Test")}>Test</button>
+	<button on:click={() => CreateNotification("TestTest")}>Test</button>
+	<button on:click={() => CreateNotification("TestTestTest")}>Test</button>
+	<button on:click={() => CreateNotification("Some very long description")}>Test</button>
+
+	<div class="notifications"></div>
 
 	<div class="ui segment basic padded">
 		<div class="ui secondary pointing menu">
@@ -132,11 +147,15 @@
 						<ResourceDisplay resource={$player.resources.money} />
 						<ResourceDisplay resource={$player.resources.people} places={0} />
 						<ResourceDisplay resource={$player.resources.food} />
+						<ResourceDisplay resource={$player.resources.livestock} />
+					</div>
+				</div>
+				<div class="ui segment">
+					<div class="ui relaxed divided big list">
 						<ResourceDisplay resource={$player.resources.wood} />
 						<ResourceDisplay resource={$player.resources.stone} />
 						<ResourceDisplay resource={$player.resources.ore} />
 						<ResourceDisplay resource={$player.resources.herbs} />
-						<ResourceDisplay resource={$player.resources.livestock} />
 					</div>
 				</div>
 			</div>
@@ -176,6 +195,19 @@
 
 	* {
 		font-family: 'Roboto', sans-serif;
+	}
+
+	.notifications {
+		position: fixed;
+		top: 0;
+		right: 0;
+		z-index: 10;
+		height: 100vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: flex-end;
+		padding: 0.25rem;
 	}
 
 </style>

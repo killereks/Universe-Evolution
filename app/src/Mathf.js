@@ -1,10 +1,67 @@
 import Decimal from "decimal.js";
 
+import { get } from "svelte/store";
+import { player } from "./stores/player.js";
+
+// format types
+// default
+// scientific
+// engineering
+// letters
+// logarithm
+// infinity -> every 1.8e308 is 1 infinity, so 3.6e616 is 2 infinities etc.
+
 export function Format(number, places = 2){
     if (number.lt(0)){
         return "-" + Format(number.abs(), places);
     }
 
+    var type = get(player).settings.format;
+
+    switch (type){
+        case "scientific":
+            return FormatScientific(number, places);
+        case "engineering":
+            return FormatEngineering(number, places);
+        case "letters":
+            return FormatLetters(number, places);
+        case "logarithm":
+            return FormatLogarithm(number, places);
+        case "infinity":
+            return FormatInfinity(number, places);
+        default:
+            return FormatDefault(number, places);
+    }
+}
+
+function FormatScientific(number, places){
+    return number.toExponential(places);
+}
+
+function FormatEngineering(number, places){
+    if (number.lt(10)) return number.toFixed(places);
+
+    var index = Math.floor(Math.log10(number) / 3);
+    var number = Decimal.div(number, Decimal.pow(1000, index));
+    return number.toFixed(places) + "e" + (index * 3);
+}
+
+function FormatLetters(number, places){
+    return "TODO";
+}
+
+function FormatLogarithm(number, places){
+    return Decimal.log10(number).toFixed(2);
+}
+
+function FormatInfinity(number, places){
+    if (number.lt(10)) return number.toFixed(places);
+    let amount = Decimal.log(number) / Decimal.log(1.79e308);
+    
+    return amount.toFixed(places) + "∞";
+}
+
+function FormatDefault(number, places){
     var numberNames = ["","K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc"];
 
     var index = Math.floor(Math.log10(number) / 3);

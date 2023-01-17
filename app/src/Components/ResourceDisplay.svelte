@@ -4,6 +4,7 @@
 
     import { fly } from 'svelte/transition';
     import { backInOut } from 'svelte/easing';
+    import ProgressBar from "./ProgressBar.svelte";
 
     export let resource = null;
     export let places = 2;
@@ -53,6 +54,8 @@
                 {:else}
                     <a class="header">{Format(resource.amount, places)} / {Format(resource.amountMax,0)}</a>
                 {/if}
+                
+                <ProgressBar value={resource.amount} max={resource.amountMax} useLog={false} />
             </div>
             <div class="column">
                 {#if resource.perSecond.gt(0)}

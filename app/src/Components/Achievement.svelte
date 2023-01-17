@@ -1,4 +1,6 @@
 <script>
+    import { fade } from "svelte/transition";
+
     export let name = "Back to Reality Or not?";
     export let description = "Complete the game";
     export let completed = false;
@@ -38,7 +40,14 @@
 
 </style>
 
-<div class='box {completed ? "completed" : ""}'>
+{#if completed}
+<div transition:fade class='box completed'>
     <img src="https://picsum.photos/200/200">
     <div title={description} class="id">{name}</div>
 </div>
+{:else}
+<div class='box'>
+    <img src="https://picsum.photos/200/200">
+    <div title={description} class="id">{name}</div>
+</div>
+{/if}
