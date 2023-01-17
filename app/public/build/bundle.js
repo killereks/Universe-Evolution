@@ -7528,15 +7528,12 @@ var app = (function () {
     function create_fragment$1(ctx) {
     	let div0;
     	let t1;
-    	let div3;
-    	let div1;
-    	let upgradebutton0;
-    	let t2;
     	let div2;
-    	let upgradebutton1;
+    	let div1;
+    	let upgradebutton;
     	let current;
 
-    	upgradebutton0 = new UpgradeButton({
+    	upgradebutton = new UpgradeButton({
     			props: {
     				click: /*func*/ ctx[1],
     				description: "Farmer",
@@ -7547,37 +7544,20 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	upgradebutton1 = new UpgradeButton({
-    			props: {
-    				click: /*func_1*/ ctx[2],
-    				description: "Farmer",
-    				effect: `Food production: ${Format(/*$player*/ ctx[0].resources.food.perSecond)} → ${Format(FoodProduction(/*$player*/ ctx[0].workers.farmers.amount.add(1)))}`,
-    				price: FarmerPrice(/*$player*/ ctx[0].workers.farmers.amount),
-    				money: /*$player*/ ctx[0].resources.money.amount,
-    				hasAutoClicker: true
-    			},
-    			$$inline: true
-    		});
-
     	const block = {
     		c: function create() {
     			div0 = element("div");
     			div0.textContent = "Government";
     			t1 = space();
-    			div3 = element("div");
-    			div1 = element("div");
-    			create_component(upgradebutton0.$$.fragment);
-    			t2 = space();
     			div2 = element("div");
-    			create_component(upgradebutton1.$$.fragment);
+    			div1 = element("div");
+    			create_component(upgradebutton.$$.fragment);
     			attr_dev(div0, "class", "ui block header");
-    			add_location(div0, file$1, 11, 0, 281);
+    			add_location(div0, file$1, 10, 0, 279);
     			attr_dev(div1, "class", "column");
-    			add_location(div1, file$1, 14, 4, 370);
-    			attr_dev(div2, "class", "column");
-    			add_location(div2, file$1, 20, 4, 791);
-    			attr_dev(div3, "class", "ui grid four columns");
-    			add_location(div3, file$1, 13, 0, 330);
+    			add_location(div1, file$1, 13, 4, 368);
+    			attr_dev(div2, "class", "ui grid four columns");
+    			add_location(div2, file$1, 12, 0, 328);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -7585,43 +7565,32 @@ var app = (function () {
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
     			insert_dev(target, t1, anchor);
-    			insert_dev(target, div3, anchor);
-    			append_dev(div3, div1);
-    			mount_component(upgradebutton0, div1, null);
-    			append_dev(div3, t2);
-    			append_dev(div3, div2);
-    			mount_component(upgradebutton1, div2, null);
+    			insert_dev(target, div2, anchor);
+    			append_dev(div2, div1);
+    			mount_component(upgradebutton, div1, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
-    			const upgradebutton0_changes = {};
-    			if (dirty & /*$player*/ 1) upgradebutton0_changes.effect = `Food production: ${Format(/*$player*/ ctx[0].resources.food.perSecond)} → ${Format(FoodProduction(/*$player*/ ctx[0].workers.farmers.amount.add(1)))}`;
-    			if (dirty & /*$player*/ 1) upgradebutton0_changes.price = FarmerPrice(/*$player*/ ctx[0].workers.farmers.amount);
-    			if (dirty & /*$player*/ 1) upgradebutton0_changes.money = /*$player*/ ctx[0].resources.money.amount;
-    			upgradebutton0.$set(upgradebutton0_changes);
-    			const upgradebutton1_changes = {};
-    			if (dirty & /*$player*/ 1) upgradebutton1_changes.effect = `Food production: ${Format(/*$player*/ ctx[0].resources.food.perSecond)} → ${Format(FoodProduction(/*$player*/ ctx[0].workers.farmers.amount.add(1)))}`;
-    			if (dirty & /*$player*/ 1) upgradebutton1_changes.price = FarmerPrice(/*$player*/ ctx[0].workers.farmers.amount);
-    			if (dirty & /*$player*/ 1) upgradebutton1_changes.money = /*$player*/ ctx[0].resources.money.amount;
-    			upgradebutton1.$set(upgradebutton1_changes);
+    			const upgradebutton_changes = {};
+    			if (dirty & /*$player*/ 1) upgradebutton_changes.effect = `Food production: ${Format(/*$player*/ ctx[0].resources.food.perSecond)} → ${Format(FoodProduction(/*$player*/ ctx[0].workers.farmers.amount.add(1)))}`;
+    			if (dirty & /*$player*/ 1) upgradebutton_changes.price = FarmerPrice(/*$player*/ ctx[0].workers.farmers.amount);
+    			if (dirty & /*$player*/ 1) upgradebutton_changes.money = /*$player*/ ctx[0].resources.money.amount;
+    			upgradebutton.$set(upgradebutton_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(upgradebutton0.$$.fragment, local);
-    			transition_in(upgradebutton1.$$.fragment, local);
+    			transition_in(upgradebutton.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(upgradebutton0.$$.fragment, local);
-    			transition_out(upgradebutton1.$$.fragment, local);
+    			transition_out(upgradebutton.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div0);
     			if (detaching) detach_dev(t1);
-    			if (detaching) detach_dev(div3);
-    			destroy_component(upgradebutton0);
-    			destroy_component(upgradebutton1);
+    			if (detaching) detach_dev(div2);
+    			destroy_component(upgradebutton);
     		}
     	};
 
@@ -7649,7 +7618,6 @@ var app = (function () {
     	});
 
     	const func = () => PurchaseFarmer(1);
-    	const func_1 = () => PurchaseFarmer(1);
 
     	$$self.$capture_state = () => ({
     		UpgradeButton,
@@ -7661,7 +7629,7 @@ var app = (function () {
     		$player
     	});
 
-    	return [$player, func, func_1];
+    	return [$player, func];
     }
 
     class GovernmentMenu extends SvelteComponentDev {
