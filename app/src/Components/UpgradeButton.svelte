@@ -8,6 +8,8 @@
     export let effect = "No effect";
     export let money = new Decimal(0);
 
+    export let moneyIcon = "No Icon";
+
     export let click = () => {};
 </script>
 
@@ -34,8 +36,8 @@
 
 <div class="container">
     <button on:click={click} class="button {money.gte(price) ? 'can-buy' : ''}">
-        <p class="text-2xl">{description}</p>
-        <p class="text-lg">{effect}</p>
-        {Format(price)}
+        <p class="text-2xl font-bold">{description}</p>
+        <p class="text-lg font-medium">{effect}</p>
+        <p class="text-2xl">{Format(price)} {moneyIcon}</p>
     </button>
 </div>

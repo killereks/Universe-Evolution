@@ -5,6 +5,8 @@
     import { Save } from "../../javascript/Save";
     import { Load } from "../../javascript/Load";
 
+    import Slider from '@bulatdashiev/svelte-slider';
+
 </script>
 
 <div class="ui block header">Settings</div>
@@ -24,5 +26,9 @@
             <option value="logarithm">Logarithm</option>
             <option value="infinity">Infinity</option>
         </select>
+    </div>
+    <div class="row">
+        <input type="range" min=1 max=60 step=1 bind:value={$player.settings.fps}>
+        <p>Current FPS: {$player.settings.fps}</p>
     </div>
 </div>

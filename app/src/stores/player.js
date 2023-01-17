@@ -50,14 +50,14 @@ const defaultPlayer = {
 		people: {
 			icon: "👨‍👩‍👧‍👦",
 			amount: new Decimal(3),
-			amountMax: new Decimal(100),
+			amountMax: new Decimal('100e1000'),
 			perSecond: new Decimal(0),
 			unlocked: true,
 		},
 		food: {
 			icon: "🍲",
 			amount: new Decimal(0),
-			amountMax: new Decimal(100),
+			amountMax: new Decimal('100e1000'),
 			perSecond: new Decimal(0),
 			unlocked: false,
 		},
@@ -99,13 +99,14 @@ const defaultPlayer = {
 		money: {
 			icon: "💰",
 			amount: new Decimal(0),
-			amountMax: new Decimal(100),
+			amountMax: new Decimal('100e1000'),
 			perSecond: new Decimal(0),
 			unlocked: true,
 		}
 	},
 	settings: {
 		format: "default",
+		fps: 30,
 	}
 };
 

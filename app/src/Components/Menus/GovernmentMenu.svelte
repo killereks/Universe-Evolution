@@ -15,6 +15,7 @@
         <UpgradeButton click={() => PurchaseFarmer(1)} description="Farmer" 
                        effect={`Food production: ${Format($player.resources.food.perSecond)} → ${Format(FoodProduction($player.workers.farmers.amount.add(1)))}`} 
                        price={FarmerPrice($player.workers.farmers.amount)}
-                       money={$player.resources.money.amount}/>
+                       money={$player.resources.money.amount}
+                       moneyIcon={$player.resources.money.icon}/>
     </div>
 </div>

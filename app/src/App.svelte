@@ -20,13 +20,12 @@
 					"Post-modern","Futuristic","Space Colonization","Post-Singularity","Transhumanism",
 				"Post-Scarcity","Intergalactic","Virtual Reality","Time Travel","Transdimensional"];
 
-	const fps = 30;
-	const dt = 1 / fps;
-
 	var game_speed = 1;
 
 	function loop(){
 		$player.lastUpdate = Date.now();
+
+		let dt = 1 / $player.settings.fps;
 
 		TimeTick(dt * game_speed);
 
@@ -52,7 +51,7 @@
 	setInterval(CheckUnlocks, 1000);
 
 	function PeopleTick(){
-		var foodBonus = Decimal.log10($player.resources.food.amount.add(1), 3);
+		var foodBonus = Decimal.log($player.resources.food.amount.add(1), 3);
 		$player.resources.people.perSecond = $player.resources.people.amount.mul(0.01).mul(foodBonus);
 	}
 
@@ -92,21 +91,23 @@
 
 	function OpenMenu(name){
 		$player.menu = name;
+		console.log($player.menu);
 	}
 
-	function CreateNotification(title, color="yellow"){
+	function CreateNotification(title, color){
+		color = color || "orange";
 		let notif = new Notification({target: document.querySelector('.notifications'), props: {title: title, color: color}});
 		setTimeout(() => notif.$destroy(), 4000);
 	}
 </script>
 
 <main>
-	<link async rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2/dist/semantic.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2/dist/semantic.min.css">
 	
 	<link rel="stylesheet" href="https://raw.githubusercontent.com/silvio-r/spop/gh-pages/dist/spop.min.css">
 
 	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
 	<script src="https://cdn.tailwindcss.com"></script>
@@ -116,10 +117,10 @@
 		<input bind:value={game_speed} type="number">
 	</div>
 
-	<button on:click={() => CreateNotification("Test")}>Test</button>
-	<button on:click={() => CreateNotification("TestTest")}>Test</button>
-	<button on:click={() => CreateNotification("TestTestTest")}>Test</button>
-	<button on:click={() => CreateNotification("Some very long description")}>Test</button>
+	<button class="ui button" on:click={() => CreateNotification("Test", "orange")}>Test</button>
+	<button class="ui button" on:click={() => CreateNotification("TestTest")}>Test</button>
+	<button class="ui button" on:click={() => CreateNotification("TestTestTest")}>Test</button>
+	<button class="ui button" on:click={() => CreateNotification("Some very long description")}>Test</button>
 
 	<div class="notifications"></div>
 
@@ -158,6 +159,7 @@
 						<ResourceDisplay resource={$player.resources.herbs} />
 					</div>
 				</div>
+				<button class="ui button fluid basic"></button>
 			</div>
 			<div class="twelve wide column">
 				<div class="ui segment basic padded">
@@ -193,8 +195,8 @@
 		text-align: center;
 	}
 
-	* {
-		font-family: 'Roboto', sans-serif;
+	:global(*:not(i)) {
+		font-family: 'Roboto', sans-serif !important;
 	}
 
 	.notifications {

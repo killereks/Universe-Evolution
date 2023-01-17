@@ -1,4 +1,5 @@
 import Decimal from "decimal.js";
+import { HtmlTag } from "svelte/internal";
 
 import { get } from "svelte/store";
 import { player } from "./stores/player.js";
@@ -41,15 +42,15 @@ function FormatScientific(number, places){
 function FormatEngineering(number, places){
     if (number.lt(10)) return number.toFixed(places);
 
-    var index = Math.floor(Math.log10(number) / 3);
+    var index = Decimal.floor(Decimal.log10(number) / 3);
     var number = Decimal.div(number, Decimal.pow(1000, index));
     return number.toFixed(places) + "e" + (index * 3);
 }
 
 function FormatLetters(number, places){
-    if (number.lt(100)) return number.toFixed(places);
+    if (number.lt(1000)) return number.toFixed(places);
 
-    var index = Math.floor(Math.log10(number)/3);
+    var index = Decimal.floor(Decimal.log10(number)/3);
     var number = Decimal.div(number, Decimal.pow(1000, index));
     return number.toFixed(places) + IndexToLetter(index);
 }
@@ -77,12 +78,15 @@ function FormatDefault(number, places){
 }
 
 function IndexToLetter(index) {
+    if (index == 0) return "A";
+
     let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let letter = "";
+    
     while (index > 0) {
-        let remainder = index % 26;
+        let remainder = (index - 1) % 26;
         letter = letters[remainder] + letter;
-        index = (index - remainder) / 26;
+        index = Math.floor((index - 1) / 26);
     }
     return letter;
 }
