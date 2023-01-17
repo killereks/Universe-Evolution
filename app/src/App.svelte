@@ -3,7 +3,7 @@
 	import ProgressBar from './Components/ProgressBar.svelte';
 	import UpgradeButton from './Components/UpgradeButton.svelte';
 
-	import {Format, FormatTimeLong, FormatTimeShort} from './Mathf';
+	import {Format, FormatTimeLong, FormatTimeShort} from './javascript/Mathf';
 	import ResourceDisplay from './Components/ResourceDisplay.svelte';
 	import MenuItem from './Components/MenuItem.svelte';
 
@@ -15,6 +15,7 @@
 	import { player } from './stores/player.js';
     import { FoodProduction } from './javascript/Production';
     import Notification from './Components/Notification.svelte';
+    import { PrestigeRequirementsString, EraPrestige, CanEraPrestige } from './javascript/Prestige';
 
 	const allAges = ["Prehistoric","Ancient","Classical","Medieval","Renaissance","Industrial","Modern",
 					"Post-modern","Futuristic","Space Colonization","Post-Singularity","Transhumanism",
@@ -79,19 +80,35 @@
 	}
 
 	function CheckUnlocks(){
+		// government and food
 		if (!$player.resources.food.unlocked){
-			if ($player.resources.money.amount.gte(10)){
+			if ($player.resources.money.amount.gte(5)){
 				$player.resources.food.unlocked = true;
 				$player.menuTabs.government = true;
 				CreateNotification("Unlocked government tab!", "orange");
 				CreateNotification("Unlocked food!", "green");
 			}
 		}
+
+		// era prestige
+		if (!$player.menuTabs.eraPrestige){
+			if ($player.resources.food.amount.gte(75)){
+				$player.menuTabs.eraPrestige = true;
+				CreateNotification("Unlocked era prestige!", "orange");
+			}
+		}
+
+		// construction
+		if (!$player.menuTabs.construction){
+			if ($player.currentAge === 1){
+				$player.menuTabs.construction = true;
+				CreateNotification("Unlocked construction tab!", "orange");
+			}
+		}
 	}
 
 	function OpenMenu(name){
 		$player.menu = name;
-		console.log($player.menu);
 	}
 
 	function CreateNotification(title, color){
@@ -112,15 +129,14 @@
 
 	<script src="https://cdn.tailwindcss.com"></script>
 
-	<div class="ui input labeled big">
-		<div class="ui label">Game Speed</div>
-		<input bind:value={game_speed} type="number">
+	<div class="ui segment">
+		<div class="ui block header">CHEATS</div>
+		<div class="ui input labeled big">
+			<div class="ui label">Game Speed</div>
+			<input bind:value={game_speed} type="number">
+		</div>
+		<button class="ui button" on:click={EraPrestige}>Next era</button>
 	</div>
-
-	<button class="ui button" on:click={() => CreateNotification("Test", "orange")}>Test</button>
-	<button class="ui button" on:click={() => CreateNotification("TestTest")}>Test</button>
-	<button class="ui button" on:click={() => CreateNotification("TestTestTest")}>Test</button>
-	<button class="ui button" on:click={() => CreateNotification("Some very long description")}>Test</button>
 
 	<div class="notifications"></div>
 
@@ -151,15 +167,26 @@
 						<ResourceDisplay resource={$player.resources.livestock} />
 					</div>
 				</div>
-				<div class="ui segment">
+				<!-- <div class="ui segment">
 					<div class="ui relaxed divided big list">
 						<ResourceDisplay resource={$player.resources.wood} />
 						<ResourceDisplay resource={$player.resources.stone} />
 						<ResourceDisplay resource={$player.resources.ore} />
 						<ResourceDisplay resource={$player.resources.herbs} />
 					</div>
-				</div>
-				<button class="ui button fluid basic"></button>
+				</div> -->
+				{#if $player.menuTabs.prestige}
+				<button class="ui button fluid basic">
+					<div class="ui list big divided">
+						{@html PrestigeRequirementsString($player.currentAge)}
+					</div>
+					{#if CanEraPrestige()}
+						<button class="ui button fluid" on:click={EraPrestige}>Prestige to {allAges[$player.currentAge+1]}</button>
+					{:else}
+						<button class="ui button fluid disabled">Can't Prestige.</button>
+					{/if}
+				</button>
+				{/if}
 			</div>
 			<div class="twelve wide column">
 				<div class="ui segment basic padded">

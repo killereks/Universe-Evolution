@@ -1,7 +1,7 @@
 <script>
     import Decimal from "decimal.js";
 
-    import {Format} from "../Mathf"
+    import {Format} from "../javascript/Mathf"
 
     export let description = "No description";
     export let price = new Decimal(10);
@@ -22,6 +22,7 @@
         height: 100%;
         border-color: #333;
         background-color: #eaeaea;
+        transition: 0.2s;
     }
     .button.can-buy {
         border-color: #4caf50;

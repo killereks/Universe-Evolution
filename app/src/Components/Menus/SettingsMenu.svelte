@@ -1,6 +1,6 @@
 <script>
     import { player } from "../../stores/player.js";
-    import { FormatTimeShort, Format } from "../../Mathf";
+    import { FormatTimeShort, Format } from "../../javascript/Mathf";
 
     import { Save } from "../../javascript/Save";
     import { Load } from "../../javascript/Load";

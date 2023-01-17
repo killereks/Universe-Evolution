@@ -21,6 +21,7 @@ const defaultPlayer = {
 		trade: false,
 		government: false,
 		achievements: false,
+		prestige: false,
 	},
 
 	workers: {
@@ -47,17 +48,24 @@ const defaultPlayer = {
 	},
 	
 	resources: {
+		money: {
+			icon: "💰",
+			amount: new Decimal(0),
+			amountMax: new Decimal(100),
+			perSecond: new Decimal(0),
+			unlocked: true,
+		},
 		people: {
 			icon: "👨‍👩‍👧‍👦",
 			amount: new Decimal(3),
-			amountMax: new Decimal('100e1000'),
+			amountMax: new Decimal(100),
 			perSecond: new Decimal(0),
 			unlocked: true,
 		},
 		food: {
 			icon: "🍲",
 			amount: new Decimal(0),
-			amountMax: new Decimal('100e1000'),
+			amountMax: new Decimal(100),
 			perSecond: new Decimal(0),
 			unlocked: false,
 		},
@@ -95,13 +103,6 @@ const defaultPlayer = {
 			amountMax: new Decimal(100),
 			perSecond: new Decimal(0),
 			unlocked: false,
-		},
-		money: {
-			icon: "💰",
-			amount: new Decimal(0),
-			amountMax: new Decimal('100e1000'),
-			perSecond: new Decimal(0),
-			unlocked: true,
 		}
 	},
 	settings: {

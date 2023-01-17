@@ -4,7 +4,7 @@
     import { player } from "../../stores/player";
 
     import { FoodProduction, FarmerPrice, PurchaseFarmer } from "../../javascript/Production.js";
-    import { Format } from "../../Mathf"
+    import { Format } from "../../javascript/Mathf"
 
 </script>
 

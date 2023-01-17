@@ -1,8 +1,7 @@
-import Decimal from "decimal.js";
-import { HtmlTag } from "svelte/internal";
+import { Decimal } from "decimal.js";
 
 import { get } from "svelte/store";
-import { player } from "./stores/player.js";
+import { player } from "../stores/player";
 
 // format types
 // default
@@ -42,7 +41,9 @@ function FormatScientific(number, places){
 function FormatEngineering(number, places){
     if (number.lt(10)) return number.toFixed(places);
 
-    var index = Decimal.floor(Decimal.log10(number) / 3);
+    // @ts-ignore
+    var index = Math.floor(Decimal.log10(number) / 3);
+    // @ts-ignore
     var number = Decimal.div(number, Decimal.pow(1000, index));
     return number.toFixed(places) + "e" + (index * 3);
 }
@@ -50,17 +51,22 @@ function FormatEngineering(number, places){
 function FormatLetters(number, places){
     if (number.lt(1000)) return number.toFixed(places);
 
+    // @ts-ignore
     var index = Decimal.floor(Decimal.log10(number)/3);
+    // @ts-ignore
     var number = Decimal.div(number, Decimal.pow(1000, index));
     return number.toFixed(places) + IndexToLetter(index);
 }
 
+// @ts-ignore
 function FormatLogarithm(number, places){
+    // @ts-ignore
     return Decimal.log10(number).toFixed(2);
 }
 
 function FormatInfinity(number, places){
     if (number.lt(10)) return number.toFixed(places);
+    // @ts-ignore
     let amount = Decimal.log(number) / Decimal.log(1.79e308);
     
     return amount.toFixed(places) + "∞";
@@ -73,6 +79,7 @@ function FormatDefault(number, places){
     if (index >= numberNames.length) return number.toExponential(places);
     if (index < 0) return number.toFixed(places);
 
+    // @ts-ignore
     var number = Decimal.div(number, Decimal.pow(1000, index));
     return number.toFixed(places) + numberNames[index];
 }
@@ -133,6 +140,7 @@ export function TimeLeft(current, target, production){
     if (production.eq(0)) return "Never";
     if (current.gte(target)) return "Now";
 
+    // @ts-ignore
     var amt = Decimal.div(Decimal.sub(target, current), production);
     return FormatTimeShort(amt.toNumber());
 }
@@ -147,8 +155,11 @@ export function TimeLeft(current, target, production){
 export function SumGeometric(price, increase, amount){
     // a(1-r^n)/(1-r)
     // price * (1 - increase ^ amount) / (1 - increase)
+    // @ts-ignore
     let first = Decimal.sub(1, Decimal.pow(increase, amount));
+    // @ts-ignore
     let second = Decimal.sub(1, increase);
+    // @ts-ignore
     return Decimal.mul(price, Decimal.div(first, second));
 }
 
@@ -161,7 +172,9 @@ export function SumGeometric(price, increase, amount){
  */
 export function CountGeometric(price, increase, currentMoney){
     // logr(1-(S(1-r)/a));
+    // @ts-ignore
     let _ = Decimal.div(Decimal.mul(currentMoney, Decimal.sub(1, increase)), price);
+    // @ts-ignore
     let out = Decimal.log10(Decimal.sub(1, _)).div(Decimal.log10(increase));
 
     if (out.lte(0)) return new Decimal(0);
@@ -177,8 +190,11 @@ export function CountGeometric(price, increase, currentMoney){
  */
 export function Sum(starting, increment, amount){
     // 0.5 * amount * (2 * starting + (amount - 1) * increment)
+    // @ts-ignore
     let first = Decimal.mul(0.5, amount);
+    // @ts-ignore
     let second = Decimal.mul(2, starting).add(Decimal.mul(Decimal.sub(amount, 1), increment));
+    // @ts-ignore
     return Decimal.mul(first, second);
 }
 
@@ -190,15 +206,22 @@ export function Sum(starting, increment, amount){
  * @returns Number of items we can buy
  */
 export function SumCount(starting, increment, currentMoney){
+    // @ts-ignore
     var topLeft = new Decimal(-2).times(starting).plus(increment);
+    // @ts-ignore
     var sqrt = new Decimal(4).times(starting).times(starting)
+                // @ts-ignore
                 .minus(new Decimal(4).times(starting).times(increment))
+                // @ts-ignore
                 .plus(new Decimal(increment).times(increment))
+                // @ts-ignore
                 .plus(new Decimal(8).times(increment).times(currentMoney));
+    // @ts-ignore
     var btm = new Decimal(2).times(increment);
 
     var x1 = topLeft.plus(sqrt.sqrt()).dividedBy(btm);
     var x2 = topLeft.minus(sqrt.sqrt()).dividedBy(btm);
 
+    // @ts-ignore
     return Decimal.max(x1, x2).floor();
 }

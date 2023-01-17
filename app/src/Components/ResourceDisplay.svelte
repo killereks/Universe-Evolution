@@ -1,10 +1,9 @@
 <script>
 
-    import { Format } from "../Mathf";
+    import { Format } from "../javascript/Mathf";
 
     import { fly } from 'svelte/transition';
     import { backInOut } from 'svelte/easing';
-    import ProgressBar from "./ProgressBar.svelte";
 
     export let resource = null;
     export let places = 2;
@@ -40,11 +39,15 @@
         font-style: normal;
         font-family: 'Roboto', sans-serif;
     }
+    
+    .header, .description {
+        text-align: left;
+    }
 
 </style>
 
+{#if resource.unlocked}
 <div class="item">
-    {#if resource.unlocked}
     <i class="icon">{resource.icon}</i>
     <div class="content" transition:fly={{x: 100, easing: backInOut}}>
         <div class="ui grid two columns">
@@ -54,8 +57,6 @@
                 {:else}
                     <a class="header">{Format(resource.amount, places)} / {Format(resource.amountMax,0)}</a>
                 {/if}
-                
-                <ProgressBar value={resource.amount} max={resource.amountMax} useLog={false} />
             </div>
             <div class="column">
                 {#if resource.perSecond.gt(0)}
@@ -67,10 +68,5 @@
         </div>
         
     </div>
-    {:else}
-    <i class="icon locked"></i>
-    <div class="content">
-        <div class="description orange">???</div>
-    </div>
-    {/if}
 </div>
+{/if}
