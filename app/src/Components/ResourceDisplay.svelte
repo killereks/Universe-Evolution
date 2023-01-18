@@ -52,11 +52,7 @@
     <div class="content" transition:fly={{x: 100, easing: backInOut}}>
         <div class="ui grid two columns">
             <div class="column">
-                {#if resource.amount.gte(resource.amountMax)}
-                <div class="description red">{Format(resource.amount, 0)} (MAX)</div>
-                {:else}
-                    <a class="header">{Format(resource.amount, places)} / {Format(resource.amountMax,0)}</a>
-                {/if}
+                <a class="header">{Format(resource.amount, places)}</a>
             </div>
             <div class="column">
                 {#if resource.perSecond.gt(0)}

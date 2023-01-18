@@ -1,5 +1,6 @@
 <script>
     import Decimal from "decimal.js";
+    import { fade } from "svelte/transition";
 
     import {Format} from "../javascript/Mathf"
 
@@ -9,6 +10,8 @@
     export let money = new Decimal(0);
 
     export let moneyIcon = "No Icon";
+
+    export let fullyBought = false;
 
     export let click = () => {};
 </script>
@@ -33,12 +36,23 @@
         background-color: #333;
         color: #eaeaea;
     }
+
+    .container {
+        height: 100%;
+    }
 </style>
 
 <div class="container">
+    {#if fullyBought}
+    <button class="button can-buy">
+        <p class="text-2xl font-bold">{description}</p>
+        <p class="text-lg font-medium">{effect}</p>
+    </button>
+    {:else}
     <button on:click={click} class="button {money.gte(price) ? 'can-buy' : ''}">
         <p class="text-2xl font-bold">{description}</p>
         <p class="text-lg font-medium">{effect}</p>
         <p class="text-2xl">{Format(price)} {moneyIcon}</p>
     </button>
+    {/if}
 </div>

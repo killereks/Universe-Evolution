@@ -1,4 +1,6 @@
 <script>
+	import { fly } from 'svelte/transition';
+
 	import Decimal from 'decimal.js';
 	import ProgressBar from './Components/ProgressBar.svelte';
 	import UpgradeButton from './Components/UpgradeButton.svelte';
@@ -13,15 +15,20 @@
 	import GovernmentMenu from './Components/Menus/GovernmentMenu.svelte';
 
 	import { player } from './stores/player.js';
-    import { FoodProduction } from './javascript/Production';
+
+    import { FoodProduction } from './javascript/Production/FoodProduction';
+	import { ToolProduction } from './javascript/Production/ToolProduction';
+
     import Notification from './Components/Notification.svelte';
     import { PrestigeRequirementsString, EraPrestige, CanEraPrestige } from './javascript/Prestige';
+    import ConstructionMenu from './Components/Menus/ConstructionMenu.svelte';
 
 	const allAges = ["Prehistoric","Ancient","Classical","Medieval","Renaissance","Industrial","Modern",
 					"Post-modern","Futuristic","Space Colonization","Post-Singularity","Transhumanism",
 				"Post-Scarcity","Intergalactic","Virtual Reality","Time Travel","Transdimensional"];
 
 	var game_speed = 1;
+	var can_prestige = false;
 
 	function loop(){
 		$player.lastUpdate = Date.now();
@@ -47,17 +54,23 @@
 		ResourceTick($player.resources.people, tick);
 		ResourceTick($player.resources.money, tick);
 		ResourceTick($player.resources.food, tick);
+		ResourceTick($player.resources.tools, tick);
 	}
 
-	setInterval(CheckUnlocks, 1000);
+	setInterval(CheckUnlocks, 250);
 
 	function PeopleTick(){
-		var foodBonus = Decimal.log($player.resources.food.amount.add(1), 3);
-		$player.resources.people.perSecond = $player.resources.people.amount.mul(0.01).mul(foodBonus);
+		var foodBonus = Decimal.log($player.resources.food.amount.add(1), 10);
+		$player.resources.people.perSecond = Decimal.max(0, foodBonus);
 	}
 
 	function MoneyTick(){
-		var moneyPerSec = $player.resources.people.amount.mul(0.1);
+		var moneyPerSec = new Decimal(1);
+
+		if ($player.upgrades["taxation"]){
+			moneyPerSec = moneyPerSec.add($player.resources.people.amount.mul(0.1));
+		}
+
 		$player.resources.money.perSecond = moneyPerSec;
 	}
 
@@ -67,16 +80,12 @@
 
 		// farmers
 		res.food.perSecond = FoodProduction(workers.farmers.amount);
+		// blacksmiths
+		res.tools.perSecond = ToolProduction(workers.blacksmiths.amount);
 	}
 
 	function ResourceTick(res, tick){
-		if (res.amount.lt(res.amountMax)){
-			res.amount = res.amount.add(res.perSecond.mul(tick));
-		}
-
 		res.amount = res.amount.add(res.perSecond.mul(tick));
-
-		res.amount = res.amount.clamp(0, res.amountMax);
 	}
 
 	function CheckUnlocks(){
@@ -90,10 +99,12 @@
 			}
 		}
 
+		can_prestige = CanEraPrestige();
+
 		// era prestige
-		if (!$player.menuTabs.eraPrestige){
-			if ($player.resources.food.amount.gte(75)){
-				$player.menuTabs.eraPrestige = true;
+		if (!$player.featuresUnlocked.prestige){
+			if ($player.resources.food.amount.gte(15)){
+				$player.featuresUnlocked.prestige = true;
 				CreateNotification("Unlocked era prestige!", "orange");
 			}
 		}
@@ -129,19 +140,19 @@
 
 	<script src="https://cdn.tailwindcss.com"></script>
 
-	<!-- <div class="ui segment">
+	<div class="ui segment">
 		<div class="ui block header">CHEATS</div>
 		<div class="ui input labeled big">
 			<div class="ui label">Game Speed</div>
 			<input bind:value={game_speed} type="number">
 		</div>
 		<button class="ui button" on:click={EraPrestige}>Next era</button>
-	</div> -->
+	</div>
 
 	<div class="notifications"></div>
 
 	<div class="ui segment basic padded">
-		<div class="ui secondary pointing menu">
+		<div class="ui secondary pointing menu stackable">
 			<MenuItem on:click={() => {}} title={allAges[$player.currentAge]} unlocked={true}/>
 			<MenuItem on:click={() => OpenMenu("Automation")} title="🤖 Automation" unlocked={$player.menuTabs.automation}/>
 			<MenuItem on:click={() => OpenMenu("Construction")} title="🛠️ Construction" unlocked={$player.menuTabs.construction}/>
@@ -157,14 +168,14 @@
 				<a class="item">Played for {FormatTimeShort($player.timePlayed)}</a>
 			</div>
 		</div>
-		<div class="ui grid">
+		<div class="ui grid stackable">
 			<div class="four wide column">
 				<div class="ui segment">
 					<div class="ui relaxed divided big list">
 						<ResourceDisplay resource={$player.resources.money} />
 						<ResourceDisplay resource={$player.resources.people} places={0} />
 						<ResourceDisplay resource={$player.resources.food} />
-						<ResourceDisplay resource={$player.resources.livestock} />
+						<ResourceDisplay resource={$player.resources.tools} />
 					</div>
 				</div>
 				<!-- <div class="ui segment">
@@ -175,13 +186,13 @@
 						<ResourceDisplay resource={$player.resources.herbs} />
 					</div>
 				</div> -->
-				{#if $player.menuTabs.prestige}
-				<button class="ui button fluid basic">
+				{#if $player.featuresUnlocked.prestige}
+				<button class="ui button fluid basic" transition:fly={{x:200}}>
 					<div class="ui list big divided">
 						{@html PrestigeRequirementsString($player.currentAge)}
 					</div>
-					{#if CanEraPrestige()}
-						<button class="ui button fluid" on:click={EraPrestige}>Prestige to {allAges[$player.currentAge+1]}</button>
+					{#if can_prestige}
+						<button class="ui button fluid" on:click={EraPrestige}>Prestige to {allAges[$player.currentAge + 1]}</button>
 					{:else}
 						<button class="ui button fluid disabled">Can't Prestige.</button>
 					{/if}
@@ -195,7 +206,7 @@
 					{:else if $player.menu == "Upgrades"}
 						<!-- <UpgradesMenu /> -->
 					{:else if $player.menu == "Construction"}
-						<!-- <ConstructionMenu /> -->
+						<ConstructionMenu/>
 					{:else if $player.menu == "Military"}
 						<!-- <MilitaryMenu /> -->
 					{:else if $player.menu == "Research"}

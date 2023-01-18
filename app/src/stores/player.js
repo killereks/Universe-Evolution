@@ -8,7 +8,7 @@ const defaultPlayer = {
 
 	lastSaved: 0,
 
-	menu: "",
+	menu: "none",
 
 	currentAge: 0,
 
@@ -21,24 +21,19 @@ const defaultPlayer = {
 		trade: false,
 		government: false,
 		achievements: false,
+	},
+
+	featuresUnlocked: {
 		prestige: false,
 	},
+
+	upgrades: [],
 
 	workers: {
 		farmers: {
 			icon: "👨‍🌾",
 			amount: new Decimal(0),
 			unlocked: true,
-		},
-		woodcutters: {
-			icon: "🪓",
-			amount: new Decimal(0),
-			unlocked: false,
-		},
-		miners: {
-			icon: "⛏️",
-			amount: new Decimal(0),
-			unlocked: false,
 		},
 		blacksmiths: {
 			icon: "🛠️",
@@ -51,59 +46,27 @@ const defaultPlayer = {
 		money: {
 			icon: "💰",
 			amount: new Decimal(0),
-			amountMax: new Decimal(100),
 			perSecond: new Decimal(0),
 			unlocked: true,
 		},
 		people: {
 			icon: "👨‍👩‍👧‍👦",
-			amount: new Decimal(3),
-			amountMax: new Decimal(100),
+			amount: new Decimal(5),
 			perSecond: new Decimal(0),
-			unlocked: true,
+			unlocked: false,
 		},
 		food: {
 			icon: "🍲",
 			amount: new Decimal(0),
-			amountMax: new Decimal(100),
 			perSecond: new Decimal(0),
 			unlocked: false,
 		},
-		wood: {
-			icon: "🌲",
+		tools: {
+			icon: "🔨",
 			amount: new Decimal(0),
-			amountMax: new Decimal(100),
 			perSecond: new Decimal(0),
 			unlocked: false,
 		},
-		stone: {
-			icon: "🪨",
-			amount: new Decimal(0),
-			amountMax: new Decimal(100),
-			perSecond: new Decimal(0),
-			unlocked: false,
-		},
-		ore: {
-			icon: "💎",
-			amount: new Decimal(0),
-			amountMax: new Decimal(100),
-			perSecond: new Decimal(0),
-			unlocked: false,
-		},
-		herbs: {
-			icon: "🌱",
-			amount: new Decimal(0),
-			amountMax: new Decimal(100),
-			perSecond: new Decimal(0),
-			unlocked: false,
-		},
-		livestock: {
-			icon: "🐄",
-			amount: new Decimal(0),
-			amountMax: new Decimal(100),
-			perSecond: new Decimal(0),
-			unlocked: false,
-		}
 	},
 	settings: {
 		format: "default",

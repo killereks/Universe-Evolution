@@ -4,25 +4,18 @@ import { player } from "../stores/player";
 
 import { Format } from "./Mathf";
 
+import { requirements } from "./PrestigeData";
+
 // 1000 food, 100 people
 
-export function PrestigeRequirements(ageIndex){
-    var requirements = [
-        // prehistoric -> Ancient
-        {
-            food: new Decimal(100),
-            people: new Decimal(100),
-            money: new Decimal(100),
-        }
-    ];
-
+export function GetPrestigeData(ageIndex){
     if (ageIndex >= requirements.length) return {};
 
     return requirements[ageIndex];
 }
 
 export function PrestigeRequirementsString(ageIndex){
-    var requirements = PrestigeRequirements(ageIndex);
+    var requirements = GetPrestigeData(ageIndex).requirements;
 
     var string = "";
 
@@ -31,9 +24,9 @@ export function PrestigeRequirementsString(ageIndex){
         let completed = resource.amount.gte(requirements[key]);
 
         if (completed){
-            string += `<div class="item"">✅ ${Format(resource.amount)}/${Format(requirements[key])} ${resource.icon}</div>`
+            //string += `<div class="item"">✅ ${Format(resource.amount,0)}/${Format(requirements[key],0)} ${resource.icon}</div>`
         } else {
-            string += `<div class="item">❌ ${Format(resource.amount)}/${Format(requirements[key])} ${resource.icon}</div>`
+            string += `<div class="item">❌ ${Format(resource.amount,2)}/${Format(requirements[key],2)} ${resource.icon}</div>`
         }
     }
 
@@ -41,7 +34,7 @@ export function PrestigeRequirementsString(ageIndex){
 }
 
 export function CanEraPrestige(){
-    var requirements = PrestigeRequirements(get(player).currentAge);
+    var requirements = GetPrestigeData(get(player).currentAge).requirements;
 
     for (var key in requirements){
         if (get(player).resources[key].amount.lt(requirements[key])) return false;
@@ -52,6 +45,43 @@ export function CanEraPrestige(){
 
 export function EraPrestige(){
     if (!CanEraPrestige()) return;
+
+    var prestigeData = GetPrestigeData(get(player).currentAge);
+    var unlocks = prestigeData.unlocks;
+
+    var playerData = get(player);
     
-    get(player).currentAge++;
+    playerData.currentAge++;
+
+    HandleReset(playerData);
+    HandleUnlocks(playerData, unlocks);
+
+    player.set(playerData);
+}
+
+function HandleReset(playerData){
+    // reset resources
+    for (var key in playerData.resources){
+        playerData.resources[key].amount = new Decimal(0);
+    }
+
+    // reset workers
+    for (var key in playerData.workers){
+        playerData.workers[key].amount = new Decimal(0);
+    }
+
+    // default resources
+    playerData.resources.people.amount = new Decimal(5);
+}
+
+function HandleUnlocks(playerData, unlocks){
+    // unlock resources
+    for (var key of unlocks.resources){
+        playerData.resources[key].unlocked = true;
+    }
+
+    // unlock workers
+    for (var key of unlocks.workers){
+        playerData.workers[key].unlocked = true;
+    }
 }
