@@ -12,7 +12,7 @@ export function FoodProduction(farmerCount){
 
     let upgrades = get(player).upgrades;
 
-    if (upgrades["farming_tools"]){
+    if (upgrades.includes("farming_tools")){
         val = val.mul(2);
     }
 

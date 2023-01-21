@@ -8,7 +8,7 @@ const defaultPlayer = {
 
 	lastSaved: 0,
 
-	menu: "none",
+	menu: "Cave", // "none"
 
 	currentAge: 0,
 
@@ -20,6 +20,7 @@ const defaultPlayer = {
 		research: false,
 		trade: false,
 		government: false,
+		cave: true,
 		achievements: false,
 	},
 
@@ -67,7 +68,24 @@ const defaultPlayer = {
 			perSecond: new Decimal(0),
 			unlocked: false,
 		},
+		liras: {
+			icon: "💎",
+			amount: new Decimal(0),
+			perSecond: new Decimal(0),
+			unlocked: true,
+		}
 	},
+
+	mining: {
+		progress: 0,
+		
+		barFillUpBought: 0,
+		automateBought: false,
+		liraChanceBought: 0,
+		doubleAmountBought: 0,
+		fiveAmountBought: 0,
+	},
+
 	settings: {
 		format: "default",
 		fps: 30,

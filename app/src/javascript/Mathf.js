@@ -151,6 +151,10 @@ export function TimeLeft(current, target, production){
     return FormatTimeShort(amt.toNumber());
 }
 
+export function Clamp(number, min, max){
+    return Math.min(Math.max(number, min), max);
+}
+
 /**
  * price + (price * increase) + (price * increase ^ 2) + ... + (price * increase ^ amount)
  * @param {Current starting price} price 
@@ -234,4 +238,9 @@ export function SumCount(starting, increment, currentMoney){
 
 function Decimals(dec){
     return dec - Math.floor(dec);
+}
+
+export function Englishfy(value, singular, plural){
+    if (value == 1) return plural;
+    return singular;
 }

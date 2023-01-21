@@ -9,7 +9,7 @@
 
 	import Decimal from 'decimal.js';
 
-	import {Format, FormatTimeLong, FormatTimeShort} from './javascript/Mathf';
+	import {Clamp, Format, FormatTimeLong, FormatTimeShort} from './javascript/Mathf';
 	import ResourceDisplay from './Components/ResourceDisplay.svelte';
 	import MenuItem from './Components/MenuItem.svelte';
 
@@ -27,6 +27,8 @@
     import { PrestigeRequirementsString, EraPrestige, CanEraPrestige } from './javascript/Prestige';
     import ConstructionMenu from './Components/Menus/ConstructionMenu.svelte';
     import { Save, Load } from './javascript/SaveLoad';
+    import Mining from "./Components/Menus/Mining.svelte";
+	import {MiningTick} from "./javascript/Mechanics/Mining";
 
 	const allAges = ["Prehistoric","Ancient","Classical","Medieval","Renaissance","Industrial","Modern",
 					"Post-modern","Futuristic","Space Colonization","Post-Singularity","Transhumanism",
@@ -60,6 +62,8 @@
 		PeopleTick();
 		MoneyTick();
 
+		MiningTick(tick);
+
 		WorkersTick(tick);
 
 		ResourceTick($player.resources.people, tick);
@@ -78,7 +82,7 @@
 	function MoneyTick(){
 		var moneyPerSec = new Decimal(1);
 
-		if ($player.upgrades["taxation"]){
+		if ($player.upgrades.includes("taxation")){
 			moneyPerSec = moneyPerSec.add($player.resources.people.amount.mul(0.1));
 		}
 
@@ -167,8 +171,6 @@
 
 			offlineProgress.calculating = true;
 
-			let timeNow = performance.now();
-
 			for (let i = 0; i < ticksAtTime; i++){
 				offlineProgress.currentTick++;
 
@@ -180,15 +182,23 @@
 				}
 			}
 
-			let timeAfter = performance.now();
-			let totalTimeTaken = timeAfter - timeNow;
-
 			offlineProgress.percent = offlineProgress.currentTick / ticks;
 			
 			requestAnimationFrame(() => runOfflineProgress(ticks));
 		}
 
 		runOfflineProgress($player.settings.offlineTicks);
+	}
+
+	function onKeyDown(e) {
+		if (e.key == "s" && e.ctrlKey){
+			Save();
+		}
+
+		// F5
+		if (e.keyCode == 116){
+			location.reload();
+		}
 	}
 </script>
 
@@ -209,7 +219,6 @@
 			<div class="ui label">Game Speed</div>
 			<input bind:value={game_speed} type="number">
 		</div>
-		<button class="ui button" on:click={EraPrestige}>Next era</button>
 	</div>
 
 	<div class="notifications"></div>
@@ -236,6 +245,7 @@
 		<div class="ui secondary pointing menu stackable">
 			<MenuItem on:click={() => {}} title={allAges[$player.currentAge]} unlocked={true}/>
 			<MenuItem on:click={() => OpenMenu("Automation")} title="🤖 Automation" unlocked={$player.menuTabs.automation}/>
+			<MenuItem on:click={() => OpenMenu("Cave") } title="🏔️ Cave" unlocked={$player.menuTabs.cave}/>
 			<MenuItem on:click={() => OpenMenu("Construction")} title="🛠️ Construction" unlocked={$player.menuTabs.construction}/>
 			<MenuItem on:click={() => OpenMenu("Government")} title="🏛️ Government" unlocked={$player.menuTabs.government}/>
 			<MenuItem on:click={() => OpenMenu("Military")} title="⚔️ Military" unlocked={$player.menuTabs.military}/>
@@ -269,7 +279,7 @@
 					</div>
 				</div> -->
 				{#if $player.featuresUnlocked.prestige}
-				<button class="ui button fluid basic" transition:fly={{x:200}}>
+				<div class="ui segment fluid" transition:fly={{x:200}}>
 					<div class="ui list big divided">
 						{@html PrestigeRequirementsString($player.currentAge)}
 					</div>
@@ -278,7 +288,7 @@
 					{:else}
 						<button class="ui button fluid disabled">Can't Prestige.</button>
 					{/if}
-				</button>
+				</div>
 				{/if}
 			</div>
 			<div class="twelve wide column">
@@ -289,6 +299,8 @@
 						<!-- <UpgradesMenu /> -->
 					{:else if $player.menu == "Construction"}
 						<ConstructionMenu/>
+					{:else if $player.menu == "Cave"}
+						<Mining />
 					{:else if $player.menu == "Military"}
 						<!-- <MilitaryMenu /> -->
 					{:else if $player.menu == "Research"}
@@ -307,6 +319,8 @@
 		</div>
 	</div>
 </main>
+
+<svelte:window on:keydown|preventDefault={onKeyDown} />
 
 <style global>
 	@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
@@ -330,6 +344,11 @@
 		justify-content: flex-start;
 		align-items: flex-end;
 		padding: 0.25rem;
+		pointer-events: none;
+	}
+
+	* {
+		user-select: none;
 	}
 
 </style>

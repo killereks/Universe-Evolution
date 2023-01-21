@@ -22,7 +22,7 @@
                        price={farming_tools_price}
                        money={$player.resources.tools.amount}
                        moneyIcon={$player.resources.tools.icon}
-                       fullyBought={$player.upgrades["farming_tools"]}/>
+                       fullyBought={$player.upgrades.includes("farming_tools")}/>
     </div>
     <div class="column">
         <UpgradeButton  click={() => PurchaseUpgradeUsingFood("taxation", taxation_price)} description={`Taxation`}
@@ -30,6 +30,6 @@
                         price={taxation_price}
                         money={$player.resources.food.amount}
                         moneyIcon={$player.resources.food.icon}
-                        fullyBought={$player.upgrades["taxation"]}/>
+                        fullyBought={$player.upgrades.includes("taxation")}/>
     </div>
 </div>

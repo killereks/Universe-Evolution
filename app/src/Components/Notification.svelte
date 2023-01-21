@@ -23,6 +23,7 @@
     .green { background-color: #2ECC71; }
     .purple { background-color: #9B59B6; }
     .blue { background-color: #3498DB; }
+    .red { background-color: #E74C3C; }
 
 
     @keyframes fly-in {
