@@ -71,6 +71,7 @@ const defaultPlayer = {
 	settings: {
 		format: "default",
 		fps: 30,
+		offlineTicks: 20000
 	}
 };
 

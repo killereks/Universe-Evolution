@@ -1,9 +1,8 @@
 <script>
     import { player } from "../../stores/player.js";
-    import { FormatTimeShort, Format } from "../../javascript/Mathf";
+    import { FormatTimeShort, Format, FormatTimeLong } from "../../javascript/Mathf";
 
-    import { Save } from "../../javascript/Save";
-    import { Load } from "../../javascript/Load";
+    import { Save, Load, HardReset } from "../../javascript/SaveLoad";
 
     import Slider from '@bulatdashiev/svelte-slider';
 
@@ -13,9 +12,10 @@
 
 <div class="ui grid">
     <div class="row">
-        <div class="ui button basic">Last saved: {FormatTimeShort($player.timePlayed)} ago</div>
-        <button class="ui button" on:click={Save}>Save <i class="download icon"></i></button>
-        <button class="ui button" on:click={Load}>Load <i class="upload icon"></i></button>
+        <div class="ui button basic">Last saved: {FormatTimeLong($player.lastSaved)} ago</div>
+        <button class="ui button teal" on:click={Save}>Save <i class="download icon"></i></button>
+        <button class="ui button teal" on:click={Load}>Load <i class="upload icon"></i></button>
+        <button class="ui button red" on:click={HardReset}>Hard Reset <i class="redo icon"></i></button>
     </div>
     <div class="row">
         <select class="ui dropdown" bind:value={$player.settings.format}>

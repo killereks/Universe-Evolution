@@ -1,9 +1,13 @@
 <script>
+// @ts-nocheck
+
+	import "./css/modal.css";
+
 	import { fly } from 'svelte/transition';
 
+	import { onMount } from 'svelte';
+
 	import Decimal from 'decimal.js';
-	import ProgressBar from './Components/ProgressBar.svelte';
-	import UpgradeButton from './Components/UpgradeButton.svelte';
 
 	import {Format, FormatTimeLong, FormatTimeShort} from './javascript/Mathf';
 	import ResourceDisplay from './Components/ResourceDisplay.svelte';
@@ -19,9 +23,10 @@
     import { FoodProduction } from './javascript/Production/FoodProduction';
 	import { ToolProduction } from './javascript/Production/ToolProduction';
 
-    import Notification from './Components/Notification.svelte';
+	import { CreateNotification } from './javascript/Notifications';
     import { PrestigeRequirementsString, EraPrestige, CanEraPrestige } from './javascript/Prestige';
     import ConstructionMenu from './Components/Menus/ConstructionMenu.svelte';
+    import { Save, Load } from './javascript/SaveLoad';
 
 	const allAges = ["Prehistoric","Ancient","Classical","Medieval","Renaissance","Industrial","Modern",
 					"Post-modern","Futuristic","Space Colonization","Post-Singularity","Transhumanism",
@@ -36,6 +41,12 @@
 		let dt = 1 / $player.settings.fps;
 
 		TimeTick(dt * game_speed);
+
+		$player.lastSaved += dt;
+
+		if ($player.lastSaved >= 30){
+			Save();
+		}
 
 		setTimeout(loop, dt * 1000);
 	}
@@ -122,10 +133,62 @@
 		$player.menu = name;
 	}
 
-	function CreateNotification(title, color){
-		color = color || "orange";
-		let notif = new Notification({target: document.querySelector('.notifications'), props: {title: title, color: color}});
-		setTimeout(() => notif.$destroy(), 4000);
+	onMount(() => {
+		// don't accidentally overwrite save
+		$player.lastSaved = 0;
+		Load();
+		OfflineProgress();
+	});
+
+	let offlineProgress = {
+		calculating: false,
+		currentTick: 0,
+		percent: 0,
+	}
+
+	function OfflineProgress(){
+		var now = Date.now();
+		var dt = (now - $player.lastUpdate) / 1000;
+
+		if (dt < 0){
+			dt = 0;
+		}
+
+		if (dt < 5){
+			return;
+		}
+
+		offlineProgress.currentTick = 0;
+
+		function runOfflineProgress(ticks){
+			let deltaTime = dt / ticks;
+
+			let ticksAtTime = 100;
+
+			offlineProgress.calculating = true;
+
+			let timeNow = performance.now();
+
+			for (let i = 0; i < ticksAtTime; i++){
+				offlineProgress.currentTick++;
+
+				if (offlineProgress.currentTick <= ticks){
+					TimeTick(deltaTime);
+				} else {
+					offlineProgress.calculating = false;
+					return;
+				}
+			}
+
+			let timeAfter = performance.now();
+			let totalTimeTaken = timeAfter - timeNow;
+
+			offlineProgress.percent = offlineProgress.currentTick / ticks;
+			
+			requestAnimationFrame(() => runOfflineProgress(ticks));
+		}
+
+		runOfflineProgress($player.settings.offlineTicks);
 	}
 </script>
 
@@ -151,6 +214,24 @@
 
 	<div class="notifications"></div>
 
+	{#if offlineProgress.calculating}
+	<div class="custom-modal" transition:fly={{y:-100}}>
+		<div class="ui segment">
+			<div class="ui header">Calculating Offline Progress...</div>
+			<p>
+				While you were offline, our trusty time-travelling historians were working hard to keep your progress up to date. <br>
+				Please wait while they calculate your progress.
+			</p>
+			<div class="content">
+				<div class="ui active progress small green indicating">
+					<div class="bar" style="width: {offlineProgress.percent * 100}%;"></div>
+					<div class="label">{offlineProgress.currentTick} / {$player.settings.offlineTicks}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{/if}
+
 	<div class="ui segment basic padded">
 		<div class="ui secondary pointing menu stackable">
 			<MenuItem on:click={() => {}} title={allAges[$player.currentAge]} unlocked={true}/>
@@ -165,6 +246,7 @@
 			<div class="right menu">
 				<MenuItem title="🏆 Achievements" unlocked={$player.menuTabs.achievements} on:click={() => OpenMenu("Achievements")}/>
 				<MenuItem title="⚙️ Settings" unlocked={true} on:click={() => OpenMenu("Settings")}/>
+				<!-- svelte-ignore a11y-missing-attribute -->
 				<a class="item">Played for {FormatTimeShort($player.timePlayed)}</a>
 			</div>
 		</div>

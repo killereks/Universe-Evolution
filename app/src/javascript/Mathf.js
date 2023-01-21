@@ -99,8 +99,13 @@ function IndexToLetter(index) {
 }
 
 export function FormatTimeLong(seconds){
+    if (seconds < 1){
+        let ms = Decimals(seconds);
+        return (ms * 1000).toFixed(0) + "ms";
+    }
+
     var values = [52*24*3600*7, 24*3600*7, 24*3600, 3600, 60, 1];
-    var prefixes = ["years","weeks","days","hours","minutes","seconds"];
+    var prefixes = ["year","week","day","hour","minute","second"];
 
     var outcome = [];
 
@@ -110,6 +115,7 @@ export function FormatTimeLong(seconds){
         if (seconds > values[i]){
             outcome[i] = Math.floor(seconds / values[i]);
             seconds -= outcome[i] * values[i];
+            if (outcome[i] > 1) prefixes[i] += "s";
             str += `${outcome[i]} ${prefixes[i]} `;
         }
     }
@@ -224,4 +230,8 @@ export function SumCount(starting, increment, currentMoney){
 
     // @ts-ignore
     return Decimal.max(x1, x2).floor();
+}
+
+function Decimals(dec){
+    return dec - Math.floor(dec);
 }
