@@ -22,22 +22,22 @@ export function MiningLiraAmount(doubleBought, fiveBought){
 }
 
 export function MiningFillRatePrice(level){
-    return Decimal.pow(1.8, level);
+    return Decimal.pow(1.8, level).floor();
 }
 
 export function MiningLiraChancePrice(level){
-    return Decimal.pow(1.23, level);
+    return Decimal.pow(1.23, level).floor();
 }
 
 export function MiningDoubleLiraAmountPrice(level){
-    return Decimal.pow(5, level);
+    return Decimal.pow(5, level).floor();
 }
 
 export function MiningFiveLiraAmountPrice(level){
     let price = Decimal.pow(25, level);
     price = price.mul(10);
 
-    return price;
+    return price.floor();
 }
 
 export function PurchaseMiningFillRate(){
@@ -100,7 +100,7 @@ export function PurchaseMiningAutomation(){
     if (playerData.resources.liras.amount.lt(price)) return;
 
     playerData.resources.liras.amount = playerData.resources.liras.amount.sub(price);
-    playerData.mining.automation = true;
+    playerData.mining.automateBought = true;
     
     player.set(playerData);
 }
@@ -111,8 +111,9 @@ export function EstimatedLirasPerSecond(){
     let fillRate = MiningFillRate(playerData.mining.barFillUpBought);
     let chance = MiningLiraChance(playerData.mining.liraChanceBought);
     let amount = MiningLiraAmount(playerData.mining.doubleAmountBought, playerData.mining.fiveAmountBought);
-
-    let lirasPerSecond = Decimal.mul(fillRate, chance).mul(amount);
+    
+    let timeToFill = Decimal.div(100, fillRate);
+    let lirasPerSecond = Decimal.mul(chance, amount).div(timeToFill);
 
     return lirasPerSecond;
 }

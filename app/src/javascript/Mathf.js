@@ -45,7 +45,7 @@ function FormatEngineering(number, places){
     var index = Math.floor(Decimal.log10(number) / 3);
     // @ts-ignore
     var number = Decimal.div(number, Decimal.pow(1000, index));
-    return number.toFixed(places) + "e" + (index * 3);
+    return number.toFixed(2) + "e" + (index * 3);
 }
 
 function FormatLetters(number, places){
@@ -55,13 +55,13 @@ function FormatLetters(number, places){
     var index = Decimal.floor(Decimal.log10(number)/3);
     // @ts-ignore
     var number = Decimal.div(number, Decimal.pow(1000, index));
-    return number.toFixed(places) + IndexToLetter(index);
+    return number.toFixed(2) + IndexToLetter(index);
 }
 
 // @ts-ignore
 function FormatLogarithm(number, places){
     // @ts-ignore
-    return Decimal.log10(number).toFixed(2);
+    return Decimal.log10(number).toFixed(places);
 }
 
 function FormatInfinity(number, places){
@@ -69,7 +69,7 @@ function FormatInfinity(number, places){
     // @ts-ignore
     let amount = Decimal.log(number) / Decimal.log(1.79e308);
     
-    return amount.toFixed(places) + "∞";
+    return amount.toFixed(2) + "∞";
 }
 
 function FormatDefault(number, places){
@@ -81,7 +81,7 @@ function FormatDefault(number, places){
 
     // @ts-ignore
     var number = Decimal.div(number, Decimal.pow(1000, index));
-    return number.toFixed(places) + numberNames[index];
+    return number.toFixed(2) + numberNames[index];
 }
 
 function IndexToLetter(index) {

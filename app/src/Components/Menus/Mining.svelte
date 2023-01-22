@@ -34,7 +34,7 @@
     </div>
     <div class="eight wide column">
         <div class="ui statistic green">
-            <div class="value">~{Format(EstimatedLirasPerSecond())}</div>
+            <div class="value">~{Format(EstimatedLirasPerSecond($player.resources.liras.amount), 2)}</div>
             <div class="label">Per Second</div>
         </div>
     </div>
@@ -47,7 +47,7 @@
                         click={PurchaseMiningFillRate}/>
     </div>
     {#if !$player.mining.automateBought}
-    <div class="four wide column">
+    <div transition:fly={{y:100}} class="four wide column">
         <UpgradeButton description="Automate bar collection"
                         effect="Manual → Automatic"
                         fullyBought={$player.mining.automateBought}
@@ -57,10 +57,10 @@
                         click={PurchaseMiningAutomation}/>
     </div>
     {/if}
-    {#if $player.mining.liraChanceBought < 89}
-    <div class="four wide column">
+    {#if $player.mining.liraChanceBought < 90}
+    <div transition:fly={{y:100}} class="four wide column">
         <UpgradeButton description="Increase chance to receive a lira"
-                        effect="{MiningLiraChance($player.mining.liraChanceBought)*100}% → {MiningLiraChance($player.mining.liraChanceBought+1)*100}%"
+                        effect="{(MiningLiraChance($player.mining.liraChanceBought)*100).toFixed(0)}% → {(MiningLiraChance($player.mining.liraChanceBought+1)*100).toFixed(0)}%"
                         fullyBought={$player.mining.liraChanceBought >= 99}
                         moneyIcon={$player.resources.liras.icon}
                         money={$player.resources.liras.amount}
@@ -70,7 +70,7 @@
     {/if}
     <div class="four wide column">
         <UpgradeButton description="More liras"
-                        effect="{MiningLiraAmount($player.mining.doubleAmountBought, $player.mining.fiveAmountBought)} → {MiningLiraAmount($player.mining.doubleAmountBought+1, $player.mining.fiveAmountBought)}"
+                        effect="{Format(MiningLiraAmount($player.mining.doubleAmountBought, $player.mining.fiveAmountBought), 0)} → {Format(MiningLiraAmount($player.mining.doubleAmountBought+1, $player.mining.fiveAmountBought), 0)}"
                         moneyIcon={$player.resources.liras.icon}
                         money={$player.resources.liras.amount}
                         price={MiningDoubleLiraAmountPrice($player.mining.doubleAmountBought)}
@@ -78,7 +78,7 @@
     </div>
     <div class="four wide column">
         <UpgradeButton description="Even more liras"
-                        effect="{MiningLiraAmount($player.mining.doubleAmountBought, $player.mining.fiveAmountBought)} → {MiningLiraAmount($player.mining.doubleAmountBought, $player.mining.fiveAmountBought+1)}"
+                        effect="{Format(MiningLiraAmount($player.mining.doubleAmountBought, $player.mining.fiveAmountBought), 0)} → {Format(MiningLiraAmount($player.mining.doubleAmountBought, $player.mining.fiveAmountBought+1), 0)}"
                         moneyIcon={$player.resources.liras.icon}
                         money={$player.resources.liras.amount}
                         price={MiningFiveLiraAmountPrice($player.mining.fiveAmountBought)}

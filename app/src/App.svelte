@@ -234,7 +234,7 @@
 			<div class="content">
 				<div class="ui active progress small green indicating">
 					<div class="bar" style="width: {offlineProgress.percent * 100}%;"></div>
-					<div class="label">{offlineProgress.currentTick} / {$player.settings.offlineTicks}</div>
+					<div class="label">{offlineProgress.currentTick} / {$player.settings.offlineTicks} ticks</div>
 				</div>
 			</div>
 		</div>
@@ -320,7 +320,8 @@
 	</div>
 </main>
 
-<svelte:window on:keydown|preventDefault={onKeyDown} />
+<!-- <svelte:window on:keydown|preventDefault={onKeyDown} /> -->
+<svelte:window on:keydown={onKeyDown} />
 
 <style global>
 	@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
