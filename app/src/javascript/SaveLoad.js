@@ -4,12 +4,15 @@ import { player } from "../stores/player"
 import Decimal from "decimal.js"
 
 import { CreateNotification } from "./Notifications";
+import { upgradeManager } from "./Upgrades/UpgradeManager";
 
 Decimal.prototype.toJSON = function(){
     return "_" + this.toString();
 }
 
 export function Save(){
+    get(player).upgrades = upgradeManager.ToJSON();
+    
     var string = JSON.stringify(get(player));
     localStorage.setItem("player", string);
 
@@ -36,6 +39,7 @@ export function Load(){
     }
 
     var data = JSON.parse(string, replacer);
+    upgradeManager.FromJSON(data.upgrades);
 
     player.set(data);
 }

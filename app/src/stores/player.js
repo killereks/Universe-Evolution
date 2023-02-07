@@ -8,7 +8,7 @@ const defaultPlayer = {
 
 	lastSaved: 0,
 
-	menu: "Cave", // "none"
+	menu: "none", // "none"
 
 	currentAge: 0,
 
@@ -28,62 +28,27 @@ const defaultPlayer = {
 		prestige: false,
 	},
 
-	upgrades: [],
-
-	workers: {
-		farmers: {
-			icon: "👨‍🌾",
-			amount: new Decimal(0),
-			unlocked: true,
-		},
-		blacksmiths: {
-			icon: "🛠️",
-			amount: new Decimal(0),
-			unlocked: false,
-		},
-	},
+	upgrades: {},
 	
 	resources: {
 		money: {
 			icon: "💰",
 			amount: new Decimal(0),
 			perSecond: new Decimal(0),
-			unlocked: true,
+			unlocked: false,
 		},
 		people: {
 			icon: "👨‍👩‍👧‍👦",
 			amount: new Decimal(5),
 			perSecond: new Decimal(0),
-			unlocked: false,
+			unlocked: true,
 		},
 		food: {
 			icon: "🍲",
-			amount: new Decimal(0),
-			perSecond: new Decimal(0),
-			unlocked: false,
-		},
-		tools: {
-			icon: "🔨",
-			amount: new Decimal(0),
-			perSecond: new Decimal(0),
-			unlocked: false,
-		},
-		liras: {
-			icon: "💎",
-			amount: new Decimal(0),
+			amount: new Decimal(5),
 			perSecond: new Decimal(0),
 			unlocked: true,
 		}
-	},
-
-	mining: {
-		progress: 0,
-		
-		barFillUpBought: 0,
-		automateBought: false,
-		liraChanceBought: 0,
-		doubleAmountBought: 0,
-		fiveAmountBought: 0,
 	},
 
 	settings: {

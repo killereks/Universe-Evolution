@@ -1,58 +1,59 @@
 <script>
     import Decimal from "decimal.js";
-    import { fade } from "svelte/transition";
-
+    import { fly } from "svelte/transition";
     import {Format} from "../javascript/Mathf"
+    import {Upgrade} from "../javascript/Upgrades/UpgradeManager";
+    
 
-    export let description = "No description";
-    export let price = new Decimal(10);
-    export let effect = "No effect";
-    export let money = new Decimal(0);
+    export let upgradeRef = new Upgrade();
 
-    export let moneyIcon = "No Icon";
+    let canBuy = false;
+    let currentCost = 0;
+    let buttonClass = "";
+    
+    let effectDescription = "";
 
-    export let fullyBought = false;
+    $: {
+        canBuy = upgradeRef.CanBuy();
+        currentCost = upgradeRef.GetCurrentCost();
 
-    export let click = () => {};
+        if (upgradeRef.IsLastLevel()){
+            buttonClass = "green";
+        } else if (canBuy){
+            buttonClass = "basic green";
+        } else {
+            buttonClass = "basic red";
+        }
+
+        effectDescription = upgradeRef.GetEffectDescription();
+    }
+
+    // force update every 250ms
+    setInterval(() => {
+        upgradeRef = upgradeRef;
+    }, 250);
+
+    function TryPurchase(){
+        upgradeRef.TryPurchase();
+
+        upgradeRef = upgradeRef;
+    }
+
 </script>
 
 <style>
-    .button {
-        border-width: 2px;
-        border-radius: 0.5rem;
-        padding: 1rem;
-        width: 100%;
-        height: 100%;
-        border-color: #333;
-        background-color: #eaeaea;
-        transition: 0.2s;
-    }
-    .button.can-buy {
-        border-color: #4caf50;
-        background-color: #8bc24b;
-    }
-    .button:disabled {
-        border-color: #333;
-        background-color: #333;
-        color: #eaeaea;
-    }
-
-    .container {
-        height: 100%;
+    .ui.button {
+        border-style: solid;
+        border-width: 1px;
     }
 </style>
 
-<div class="container">
-    {#if fullyBought}
-    <button class="button can-buy">
-        <p class="text-2xl font-bold">{description}</p>
-        <p class="text-lg font-medium">{effect}</p>
-    </button>
+<button class="ui button {buttonClass}" on:click={TryPurchase}>
+    <p>{upgradeRef.description}</p>
+    {#if upgradeRef.IsLastLevel()}
+    <p transition:fly={{x:200}}>{effectDescription}</p>
     {:else}
-    <button on:click={click} class="button {money.gte(price) ? 'can-buy' : ''}">
-        <p class="text-2xl font-bold">{description}</p>
-        <p class="text-lg font-medium">{effect}</p>
-        <p class="text-2xl">{Format(price)} {moneyIcon}</p>
-    </button>
+    <p>{Format(currentCost)} {upgradeRef.costCurrency.icon}</p>
+    <p>{effectDescription}</p>
     {/if}
-</div>
+</button>

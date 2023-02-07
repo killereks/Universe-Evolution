@@ -14,28 +14,20 @@
 	import MenuItem from './Components/MenuItem.svelte';
 
 	// menus
-	import AchievementMenu from './Components/Menus/AchievementMenu.svelte';
 	import SettingsMenu from './Components/Menus/SettingsMenu.svelte';
-	import GovernmentMenu from './Components/Menus/GovernmentMenu.svelte';
 
 	import { player } from './stores/player.js';
 
-    import { FoodProduction } from './javascript/Production/FoodProduction';
-	import { ToolProduction } from './javascript/Production/ToolProduction';
-
-	import { CreateNotification } from './javascript/Notifications';
-    import { PrestigeRequirementsString, EraPrestige, CanEraPrestige } from './javascript/Prestige';
-    import ConstructionMenu from './Components/Menus/ConstructionMenu.svelte';
     import { Save, Load } from './javascript/SaveLoad';
-    import Mining from "./Components/Menus/Mining.svelte";
-	import {MiningTick} from "./javascript/Mechanics/Mining";
+    import UpgradeButton from "./Components/UpgradeButton.svelte";
+
+	import { upgradeManager } from "./javascript/Upgrades/UpgradeManager";
 
 	const allAges = ["Prehistoric","Ancient","Classical","Medieval","Renaissance","Industrial","Modern",
 					"Post-modern","Futuristic","Space Colonization","Post-Singularity","Transhumanism",
 				"Post-Scarcity","Intergalactic","Virtual Reality","Time Travel","Transdimensional"];
 
 	var game_speed = 1;
-	var can_prestige = false;
 
 	function loop(){
 		$player.lastUpdate = Date.now();
@@ -59,78 +51,53 @@
 
 		document.title = Format($player.resources.money.amount) + " - " + allAges[$player.currentAge];
 
-		PeopleTick();
-		MoneyTick();
+		CalculatePeoplePerSec();
+		CalculateMoneyPerSec();
+		CalculateFoodPerSec();
 
-		MiningTick(tick);
-
-		WorkersTick(tick);
-
-		ResourceTick($player.resources.people, tick);
 		ResourceTick($player.resources.money, tick);
+		ResourceTick($player.resources.people, tick);
 		ResourceTick($player.resources.food, tick);
-		ResourceTick($player.resources.tools, tick);
 	}
 
 	setInterval(CheckUnlocks, 250);
 
-	function PeopleTick(){
-		var foodBonus = Decimal.log($player.resources.food.amount.add(1), 10);
-		$player.resources.people.perSecond = Decimal.max(0, foodBonus);
+	function CalculatePeoplePerSec(){
+		let perSec = new Decimal(0);
+		
+		if ($player.resources.food.amount > 0){
+			perSec = new Decimal(0.2);
+		}
+		$player.resources.people.perSecond = perSec;
 	}
 
-	function MoneyTick(){
+	function CalculateMoneyPerSec(){
+		if (!$player.resources.money.unlocked) return;
+
 		var moneyPerSec = new Decimal(1);
-
-		if ($player.upgrades.includes("taxation")){
-			moneyPerSec = moneyPerSec.add($player.resources.people.amount.mul(0.1));
-		}
-
 		$player.resources.money.perSecond = moneyPerSec;
 	}
 
-	function WorkersTick(dt){
-		var workers = $player.workers;
-		var res = $player.resources;
+	function CalculateFoodPerSec(){
+		var foodPerSec = $player.resources.people.amount.mul(-0.05);
 
-		// farmers
-		res.food.perSecond = FoodProduction(workers.farmers.amount);
-		// blacksmiths
-		res.tools.perSecond = ToolProduction(workers.blacksmiths.amount);
+		foodPerSec = foodPerSec.add(upgradeManager.GetUpgrade("food_production").GetValue());
+
+		$player.resources.food.perSecond = foodPerSec;
 	}
 
 	function ResourceTick(res, tick){
-		res.amount = res.amount.add(res.perSecond.mul(tick));
+		if (!res.unlocked) return;
+
+		if (res.perSecond.lt(0) && res.amount.lt(-res.perSecond.mul(tick))){
+			res.amount = new Decimal(0);
+		} else {
+			res.amount = res.amount.add(res.perSecond.mul(tick));
+		}
 	}
 
 	function CheckUnlocks(){
-		// government and food
-		if (!$player.resources.food.unlocked){
-			if ($player.resources.money.amount.gte(5)){
-				$player.resources.food.unlocked = true;
-				$player.menuTabs.government = true;
-				CreateNotification("Unlocked government tab!", "orange");
-				CreateNotification("Unlocked food!", "green");
-			}
-		}
-
-		can_prestige = CanEraPrestige();
-
-		// era prestige
-		if (!$player.featuresUnlocked.prestige){
-			if ($player.resources.food.amount.gte(15)){
-				$player.featuresUnlocked.prestige = true;
-				CreateNotification("Unlocked era prestige!", "orange");
-			}
-		}
-
-		// construction
-		if (!$player.menuTabs.construction){
-			if ($player.currentAge === 1){
-				$player.menuTabs.construction = true;
-				CreateNotification("Unlocked construction tab!", "orange");
-			}
-		}
+		
 	}
 
 	function OpenMenu(name){
@@ -178,6 +145,7 @@
 					TimeTick(deltaTime);
 				} else {
 					offlineProgress.calculating = false;
+					Save();
 					return;
 				}
 			}
@@ -244,14 +212,6 @@
 	<div class="ui segment basic padded">
 		<div class="ui secondary pointing menu stackable">
 			<MenuItem on:click={() => {}} title={allAges[$player.currentAge]} unlocked={true}/>
-			<MenuItem on:click={() => OpenMenu("Automation")} title="🤖 Automation" unlocked={$player.menuTabs.automation}/>
-			<MenuItem on:click={() => OpenMenu("Cave") } title="🏔️ Cave" unlocked={$player.menuTabs.cave}/>
-			<MenuItem on:click={() => OpenMenu("Construction")} title="🛠️ Construction" unlocked={$player.menuTabs.construction}/>
-			<MenuItem on:click={() => OpenMenu("Government")} title="🏛️ Government" unlocked={$player.menuTabs.government}/>
-			<MenuItem on:click={() => OpenMenu("Military")} title="⚔️ Military" unlocked={$player.menuTabs.military}/>
-			<MenuItem on:click={() => OpenMenu("Research")} title="📜 Research" unlocked={$player.menuTabs.research}/>
-			<MenuItem on:click={() => OpenMenu("Trade")} title="🏦 Trade" unlocked={$player.menuTabs.trade}/>
-			<MenuItem on:click={() => OpenMenu("Upgrades")} title="🔧 Upgrades" unlocked={$player.menuTabs.upgrades}/>
 
 			<div class="right menu">
 				<MenuItem title="🏆 Achievements" unlocked={$player.menuTabs.achievements} on:click={() => OpenMenu("Achievements")}/>
@@ -267,53 +227,16 @@
 						<ResourceDisplay resource={$player.resources.money} />
 						<ResourceDisplay resource={$player.resources.people} places={0} />
 						<ResourceDisplay resource={$player.resources.food} />
-						<ResourceDisplay resource={$player.resources.tools} />
 					</div>
 				</div>
-				<!-- <div class="ui segment">
-					<div class="ui relaxed divided big list">
-						<ResourceDisplay resource={$player.resources.wood} />
-						<ResourceDisplay resource={$player.resources.stone} />
-						<ResourceDisplay resource={$player.resources.ore} />
-						<ResourceDisplay resource={$player.resources.herbs} />
-					</div>
-				</div> -->
-				{#if $player.featuresUnlocked.prestige}
-				<div class="ui segment fluid" transition:fly={{x:200}}>
-					<div class="ui list big divided">
-						{@html PrestigeRequirementsString($player.currentAge)}
-					</div>
-					{#if can_prestige}
-						<button class="ui button fluid" on:click={EraPrestige}>Prestige to {allAges[$player.currentAge + 1]}</button>
-					{:else}
-						<button class="ui button fluid disabled">Can't Prestige.</button>
-					{/if}
-				</div>
-				{/if}
+				<!-- Prestige requirements here -->
 			</div>
 			<div class="twelve wide column">
 				<div class="ui segment basic padded">
-					{#if $player.menu == "Automation"}
-						<!-- <AutomationMenu /> -->
-					{:else if $player.menu == "Upgrades"}
-						<!-- <UpgradesMenu /> -->
-					{:else if $player.menu == "Construction"}
-						<ConstructionMenu/>
-					{:else if $player.menu == "Cave"}
-						<Mining />
-					{:else if $player.menu == "Military"}
-						<!-- <MilitaryMenu /> -->
-					{:else if $player.menu == "Research"}
-						<!-- <ResearchMenu /> -->
-					{:else if $player.menu == "Trade"}
-						<!-- <TradeMenu /> -->
-					{:else if $player.menu == "Government"}
-						<GovernmentMenu />
-					{:else if $player.menu == "Achievements"}
-						<AchievementMenu/>
-					{:else if $player.menu == "Settings"}
-						<SettingsMenu />
+					{#if $player.menu == "Settings"}
+					<SettingsMenu/>
 					{/if}
+					<UpgradeButton upgradeRef={upgradeManager.GetUpgrade("food_production")}/>
 				</div>
 			</div>
 		</div>
