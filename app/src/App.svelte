@@ -207,7 +207,16 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
-	<script src="https://cdn.tailwindcss.com"></script>
+	<meta property="og:title" content="Unlock the Secrets of the Universe: Evolve from Cavemen to Intergalactic Conquerors in Universe Evolution">
+	<meta property="og:type" content="website">
+	<meta property="og:image" content="https://i.imgur.com/6LEMqJF.png">
+	<meta property="og:image:secure_url" content="https://i.imgur.com/6LEMqJF.png">
+	<meta property="og:image:type" content="image/png">
+	<meta property="og:image:width" content="1200">
+	<meta property="og:image:height" content="630">
+	<meta property="og:description" content="Embark on a journey through the ages, from the prehistoric era to the intergalactic future. Gather resources, build your tribe, and upgrade your technology to reach the next age. Play now!">
+	<meta property="og:site_name" content="Idle Game">
+
 
 	<div class="ui segment">
 		<div class="ui block header">CHEATS</div>
