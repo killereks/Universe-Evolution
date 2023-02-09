@@ -4,6 +4,7 @@
 	import "./css/modal.css";
 
 	import { fly } from 'svelte/transition';
+	import { MetaTags } from 'svelte-meta-tags';
 
 	import { onMount } from 'svelte';
 
@@ -198,6 +199,18 @@
 	
 </script>
 
+<svelte:head>
+	<meta property="og:title" content="Unlock the Secrets of the Universe: Evolve from Cavemen to Intergalactic Conquerors in Universe Evolution">
+	<meta property="og:type" content="website">
+	<meta property="og:image" content="https://i.imgur.com/dejTamj.png">
+	<meta property="og:image:secure_url" content="https://i.imgur.com/dejTamj.png">
+	<meta property="og:image:type" content="image/png">
+	<meta property="og:image:width" content="500">
+	<meta property="og:image:height" content="500">
+	<meta property="og:description" content="Embark on a journey through the ages, from the prehistoric era to the intergalactic future. Gather resources, build your tribe, and upgrade your technology to reach the next age. Play now!">
+	<meta property="og:site_name" content="Idle Game">
+</svelte:head>
+
 <main>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2/dist/semantic.min.css">
 	
@@ -206,17 +219,6 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-
-	<meta property="og:title" content="Unlock the Secrets of the Universe: Evolve from Cavemen to Intergalactic Conquerors in Universe Evolution">
-	<meta property="og:type" content="website">
-	<meta property="og:image" content="https://i.imgur.com/6LEMqJF.png">
-	<meta property="og:image:secure_url" content="https://i.imgur.com/6LEMqJF.png">
-	<meta property="og:image:type" content="image/png">
-	<meta property="og:image:width" content="1200">
-	<meta property="og:image:height" content="630">
-	<meta property="og:description" content="Embark on a journey through the ages, from the prehistoric era to the intergalactic future. Gather resources, build your tribe, and upgrade your technology to reach the next age. Play now!">
-	<meta property="og:site_name" content="Idle Game">
-
 
 	<div class="ui segment">
 		<div class="ui block header">CHEATS</div>

@@ -13,6 +13,7 @@
     "@sveltejs/vite-plugin-svelte": "^2.0.0",
     "gh-pages": "^4.0.0",
     "svelte": "^3.54.0",
+    "svelte-meta-tags": "^2.6.5",
     "vite": "^4.0.0"
   },
   "dependencies": {
