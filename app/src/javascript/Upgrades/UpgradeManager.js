@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import { get } from "svelte/store";
+import { get, writable } from "svelte/store";
 import { player } from "../../stores/player";
 import { Format } from "../Mathf";
 
@@ -20,6 +20,8 @@ export class Upgrade {
         this.maxPurchaseCount = settings.maxPurchaseCount;
 
         this.purchaseCount = 0;
+
+        this._store = writable(this);
     }
 
     GetCurrentCost(){
@@ -46,12 +48,16 @@ export class Upgrade {
         return out;
     }
 
+    get CurrentMoney(){
+        return this.costCurrency();
+    }
+
     CanBuy(){
         if (this.purchaseCount >= this.maxPurchaseCount) return false;
 
         let cost = this.GetCurrentCost();
 
-        return this.costCurrency.amount.gte(cost);
+        return this.CurrentMoney.amount.gte(cost);
     }
 
     IsLastLevel(){
@@ -64,17 +70,17 @@ export class Upgrade {
         let cost = this.GetCurrentCost();
         
         if (this.CanBuy()){
-            this.costCurrency.amount = this.costCurrency.amount.sub(cost);
+            this.CurrentMoney.amount = this.CurrentMoney.amount.sub(cost);
             this.purchaseCount++;
-
-            // force svelte update whole component
-            this.description = this.description;
-            player.set(get(player));
 
             return true;
         }
 
         return false;
+    }
+
+    subscribe(subscriber){
+        return this._store.subscribe(subscriber);
     }
 }
 
@@ -119,6 +125,8 @@ export class UpgradeManager {
             let amount = json[this.upgrades[i].name];
             this.upgrades[i].purchaseCount = amount;
         }
+
+        this.cache = {};
     }
 }
 
@@ -129,7 +137,7 @@ upgradeManager.AddUpgrade(new Upgrade({
     description: "Automatically produce food every second.",
     effectText: "Produce {value} food per second.",
 
-    costCurrency: get(player).resources.people,
+    costCurrency: () => get(player).resources.people,
     costFunction: (index) => Decimal.pow(1.2, index).mul(2),
 
     startLevel: 0,

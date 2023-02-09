@@ -13,11 +13,13 @@
     
     let effectDescription = "";
 
-    $: {
-        canBuy = upgradeRef.CanBuy();
-        currentCost = upgradeRef.GetCurrentCost();
+    let icon = $upgradeRef.CurrentMoney.icon;
 
-        if (upgradeRef.IsLastLevel()){
+    $: {
+        canBuy = $upgradeRef.CanBuy();
+        currentCost = $upgradeRef.GetCurrentCost();
+
+        if ($upgradeRef.IsLastLevel()){
             buttonClass = "green";
         } else if (canBuy){
             buttonClass = "basic green";
@@ -25,19 +27,12 @@
             buttonClass = "basic red";
         }
 
-        effectDescription = upgradeRef.GetEffectDescription();
+        effectDescription = $upgradeRef.GetEffectDescription();
     }
 
-    // force update every 250ms
     setInterval(() => {
-        upgradeRef = upgradeRef;
+        $upgradeRef._store.set($upgradeRef);
     }, 250);
-
-    function TryPurchase(){
-        upgradeRef.TryPurchase();
-
-        upgradeRef = upgradeRef;
-    }
 
 </script>
 
@@ -48,12 +43,12 @@
     }
 </style>
 
-<button class="ui button {buttonClass}" on:click={TryPurchase}>
-    <p>{upgradeRef.description}</p>
-    {#if upgradeRef.IsLastLevel()}
+<button class="ui button {buttonClass}" on:click={() => $upgradeRef.TryPurchase()}>
+    <p>{$upgradeRef.description}</p>
+    {#if $upgradeRef.IsLastLevel()}
     <p transition:fly={{x:200}}>{effectDescription}</p>
     {:else}
-    <p>{Format(currentCost)} {upgradeRef.costCurrency.icon}</p>
+    <p>{Format(currentCost)} {icon}</p>
     <p>{effectDescription}</p>
     {/if}
 </button>

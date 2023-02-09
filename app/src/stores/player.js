@@ -1,5 +1,4 @@
 import Decimal from "decimal.js";
-
 import { writable } from "svelte/store";
 
 const defaultPlayer = {
