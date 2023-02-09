@@ -130,7 +130,7 @@
 	onMount(() => {
 		// don't accidentally overwrite save
 		$player.lastSaved = 0;
-		Load();
+		//Load();
 		OfflineProgress();
 	});
 
