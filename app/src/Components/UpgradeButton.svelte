@@ -41,10 +41,11 @@
     .ui.button {
         border-style: solid;
         border-width: 1px;
+        height: 100%;
     }
 </style>
 
-<button class="ui button {buttonClass}" on:click={() => $upgradeRef.TryPurchase()}>
+<button class="ui button fluid {buttonClass}" on:click={() => $upgradeRef.TryPurchase()}>
     <p>{$upgradeRef.description}</p>
     {#if $upgradeRef.IsLastLevel()}
     <p transition:fly={{x:200}}>{effectDescription}</p>

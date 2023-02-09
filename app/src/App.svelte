@@ -195,6 +195,7 @@
 	function GetCurrentEra(){
 		return allAges[$player.currentAge];
 	}
+	
 </script>
 
 <main>
@@ -249,7 +250,7 @@
 		</div>
 		<div class="ui grid stackable">
 			<div class="four wide column">
-				<div class="ui segment">
+				<div class="ui segment sticky">
 					<div class="ui relaxed divided big list">
 						<ResourceDisplay resource={$player.resources.money} />
 						<ResourceDisplay resource={$player.resources.people} places={0} />
