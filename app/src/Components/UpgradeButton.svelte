@@ -1,8 +1,9 @@
 <script>
     import Decimal from "decimal.js";
     import { fly } from "svelte/transition";
-    import {Format} from "../javascript/Mathf"
+    import {Format, FormatTimeShort} from "../javascript/Mathf"
     import {Upgrade} from "../javascript/Upgrades/UpgradeManager";
+    import { player } from "../stores/player";
     
 
     export let upgradeRef = new Upgrade();
@@ -49,6 +50,9 @@
     <p transition:fly={{x:200}}>{effectDescription}</p>
     {:else}
     <p>{Format(currentCost)} {icon}</p>
-    <p>{effectDescription}</p>
+    <p><b>{effectDescription}</b></p>
+        {#if $player.settings.displayTimeLeft}
+            <p>{$upgradeRef.TimeLeft}</p>
+        {/if}
     {/if}
 </button>

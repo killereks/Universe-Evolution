@@ -4,8 +4,6 @@
 
     import { Save, Load, HardReset } from "../../javascript/SaveLoad";
 
-    import Slider from '@bulatdashiev/svelte-slider';
-
 </script>
 
 <div class="ui block header">Settings</div>
@@ -30,5 +28,11 @@
     <div class="row">
         <input type="range" min=1 max=60 step=1 bind:value={$player.settings.fps}>
         <p>Current FPS: {$player.settings.fps}</p>
+    </div>
+    <div class="row">
+        <div class="ui checkbox">
+            <input type="checkbox" bind:checked={$player.settings.displayTimeLeft}>
+            <label>Display time left on upgrades</label>
+        </div>
     </div>
 </div>

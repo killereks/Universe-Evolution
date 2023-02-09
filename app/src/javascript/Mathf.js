@@ -45,7 +45,7 @@ function FormatEngineering(number, places){
     var index = Math.floor(Decimal.log10(number) / 3);
     // @ts-ignore
     var number = Decimal.div(number, Decimal.pow(1000, index));
-    return number.toFixed(2) + "e" + (index * 3);
+    return number.toFixed(places) + "e" + (index * 3);
 }
 
 function FormatLetters(number, places){
@@ -55,7 +55,7 @@ function FormatLetters(number, places){
     var index = Decimal.floor(Decimal.log10(number)/3);
     // @ts-ignore
     var number = Decimal.div(number, Decimal.pow(1000, index));
-    return number.toFixed(2) + IndexToLetter(index);
+    return number.toFixed(places) + IndexToLetter(index);
 }
 
 // @ts-ignore
@@ -69,7 +69,7 @@ function FormatInfinity(number, places){
     // @ts-ignore
     let amount = Decimal.log(number) / Decimal.log(1.79e308);
     
-    return amount.toFixed(2) + "∞";
+    return amount.toFixed(places) + "∞";
 }
 
 function FormatDefault(number, places){
@@ -81,7 +81,7 @@ function FormatDefault(number, places){
 
     // @ts-ignore
     var number = Decimal.div(number, Decimal.pow(1000, index));
-    return number.toFixed(2) + numberNames[index];
+    return number.toFixed(places) + numberNames[index];
 }
 
 function IndexToLetter(index) {
@@ -142,12 +142,16 @@ export function FormatTimeShort(seconds){
     return str;
 }
 
-export function TimeLeft(current, target, production){
+export function CalculateTimeLeft(current, target, production){
     if (production.eq(0)) return "Never";
     if (current.gte(target)) return "Now";
 
     // @ts-ignore
     var amt = Decimal.div(Decimal.sub(target, current), production);
+
+    // less than 1 second
+    if (amt.lt(1)) return "< 1s";
+
     return FormatTimeShort(amt.toNumber());
 }
 

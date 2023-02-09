@@ -1,7 +1,7 @@
 import Decimal from "decimal.js";
 import { get, writable } from "svelte/store";
 import { player } from "../../stores/player";
-import { Format } from "../Mathf";
+import { CalculateTimeLeft, Format } from "../Mathf";
 
 export class Upgrade {
     // description, cost (number), cost (currency object pointer), cost formula function
@@ -19,6 +19,8 @@ export class Upgrade {
         this.increment = settings.increment;
         this.maxPurchaseCount = settings.maxPurchaseCount;
 
+        this.isMultiplicative = settings.isMultiplicative;
+
         this.purchaseCount = 0;
 
         this._store = writable(this);
@@ -28,28 +30,42 @@ export class Upgrade {
         return this.costFunction(this.purchaseCount);
     }
 
-    GetValue(){
-        return new Decimal(this.startLevel).add(new Decimal(this.increment).mul(this.purchaseCount));
-    }
-
-    GetNextValue(){
-        return new Decimal(this.GetValue()).add(this.increment);
-    }
-
     GetEffectDescription(){
         let out = "";
 
         if (this.IsLastLevel()){
-            out = this.effectText.replace("{value}", Format(this.GetValue()));
+            out = this.effectText.replace("{value}", Format(this.DecimalValue));
         } else {
-            out = this.effectText.replace("{value}", Format(this.GetValue()) + " -> " + Format(this.GetNextValue()));
+            out = this.effectText.replace("{value}", Format(this.DecimalValue) + " -> " + Format(this.NextDecimalValue));
         }
 
         return out;
     }
 
+    get TimeLeft(){
+        return CalculateTimeLeft(this.CurrentMoney.amount, this.GetCurrentCost(), this.CurrentMoney.perSecond);
+    }
+
     get CurrentMoney(){
         return this.costCurrency();
+    }
+
+    get DecimalValue(){
+        if (this.isMultiplicative){
+            return new Decimal(this.startLevel).mul(new Decimal(this.increment).pow(this.purchaseCount));
+        }
+        return new Decimal(this.startLevel).add(new Decimal(this.increment).mul(this.purchaseCount));
+    }
+
+    get NextDecimalValue(){
+        if (this.isMultiplicative){
+            return new Decimal(this.DecimalValue).mul(this.increment);
+        }
+        return new Decimal(this.DecimalValue).add(this.increment);
+    }
+
+    get Value(){
+        return this.DecimalValue.toNumber();
     }
 
     CanBuy(){
@@ -91,11 +107,11 @@ export class UpgradeManager {
         this.cache = {};
     }
 
-    AddUpgrade(upgrade){
+    Add(upgrade){
         this.upgrades.push(upgrade);
     }
 
-    GetUpgrade(name){
+    Get(name){
         if (this.cache[name]) return this.cache[name];
 
         for (let i = 0; i < this.upgrades.length; i++){
@@ -132,15 +148,77 @@ export class UpgradeManager {
 
 export const upgradeManager = new UpgradeManager();
 
-upgradeManager.AddUpgrade(new Upgrade({
-    name: "food_production",
-    description: "Automatically produce food every second.",
-    effectText: "Produce {value} food per second.",
+upgradeManager.Add(new Upgrade({
+    name: "shelter",
+    description: "Build a shelter for better rest quality.",
+    effectText: "Action speed is {value} times faster.",
 
-    costCurrency: () => get(player).resources.people,
-    costFunction: (index) => Decimal.pow(1.2, index).mul(2),
+    costCurrency: () => get(player).resources.wood,
+    costFunction: (index) => [new Decimal(2), new Decimal(3), new Decimal(10), new Decimal(25), new Decimal(50)][index],
+
+    isMultiplicative: true,
+
+    startLevel: 1,
+    increment: 2,
+    maxPurchaseCount: 5
+}));
+
+upgradeManager.Add(new Upgrade({
+    name: "fire",
+    description: "Build a fire.",
+    effectText: "Action speed is {value} times faster.",
+
+    costCurrency: () => get(player).resources.wood,
+    costFunction: (index) => Decimal.pow(3, index).mul(10),
+    
+    isMultiplicative: true,
+
+    startLevel: 1,
+    increment: 1.5,
+    maxPurchaseCount: 5
+}));
+
+upgradeManager.Add(new Upgrade({
+    name: "storage",
+    description: "Build a storage.",
+    effectText: "Journey rewards are {value} times bigger.",
+
+    costCurrency: () => get(player).resources.wood,
+    costFunction: (index) => Decimal.pow(5, index).mul(15),
+    
+    isMultiplicative: false,
+
+    startLevel: 1,
+    increment: 1,
+    maxPurchaseCount: 10
+}));
+
+upgradeManager.Add(new Upgrade({
+    name: "hunting",
+    description: "Teach people how to hunt on their own.",
+    effectText: "Gain {value} food per second.",
+
+    costCurrency: () => get(player).resources.wood,
+    costFunction: (index) => Decimal.pow(1.3, index).mul(3),
+
+    isMultiplicative: false,
 
     startLevel: 0,
     increment: 1,
     maxPurchaseCount: 10
-}));
+}))
+
+upgradeManager.Add(new Upgrade({
+    name: "wood_chopping",
+    description: "Teach people how to collect wood.",
+    effectText: "Gain {value} wood per second.",
+
+    costCurrency: () => get(player).resources.wood,
+    costFunction: (index) => Decimal.pow(4, index).mul(2),
+
+    isMultiplicative: false,
+
+    startLevel: 0,
+    increment: 1,
+    maxPurchaseCount: 10
+}))

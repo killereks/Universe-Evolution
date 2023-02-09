@@ -12,14 +12,7 @@ const defaultPlayer = {
 	currentAge: 0,
 
 	menuTabs: {
-		automation: false,
-		upgrades: false,
-		construction: false,
-		military: false,
-		research: false,
-		trade: false,
-		government: false,
-		cave: true,
+		actions: true,
 		achievements: false,
 	},
 
@@ -38,22 +31,34 @@ const defaultPlayer = {
 		},
 		people: {
 			icon: "👨‍👩‍👧‍👦",
-			amount: new Decimal(5),
+			amount: new Decimal(0),
 			perSecond: new Decimal(0),
 			unlocked: true,
 		},
 		food: {
 			icon: "🍲",
-			amount: new Decimal(5),
+			amount: new Decimal(0),
 			perSecond: new Decimal(0),
-			unlocked: true,
+			unlocked: false,
+		},
+		wood: {
+			icon: "🪵",
+			amount: new Decimal(0),
+			perSecond: new Decimal(0),
+			unlocked: false,
 		}
+	},
+
+	actions: {
+		current: "",
+		progress: 0
 	},
 
 	settings: {
 		format: "default",
 		fps: 30,
-		offlineTicks: 20000
+		offlineTicks: 50000,
+		displayTimeLeft: false
 	}
 };
 

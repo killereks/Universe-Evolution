@@ -22,6 +22,10 @@
     import UpgradeButton from "./Components/UpgradeButton.svelte";
 
 	import { upgradeManager } from "./javascript/Upgrades/UpgradeManager";
+    import ActionsMenu from "./Components/Menus/ActionsMenu.svelte";
+    import ProgressBar from "./Components/ProgressBar.svelte";
+
+	import { ActionTick } from "./javascript/Mechanics/Prehistoric/Actions";
 
 	const allAges = ["Prehistoric","Ancient","Classical","Medieval","Renaissance","Industrial","Modern",
 					"Post-modern","Futuristic","Space Colonization","Post-Singularity","Transhumanism",
@@ -39,7 +43,7 @@
 		$player.lastSaved += dt;
 
 		if ($player.lastSaved >= 30){
-			Save();
+			//Save();
 		}
 
 		setTimeout(loop, dt * 1000);
@@ -54,10 +58,14 @@
 		CalculatePeoplePerSec();
 		CalculateMoneyPerSec();
 		CalculateFoodPerSec();
+		CalculateWoodPerSec();
 
 		ResourceTick($player.resources.money, tick);
 		ResourceTick($player.resources.people, tick);
 		ResourceTick($player.resources.food, tick);
+		ResourceTick($player.resources.wood, tick);
+
+		ActionTick(tick);
 	}
 
 	setInterval(CheckUnlocks, 250);
@@ -81,9 +89,17 @@
 	function CalculateFoodPerSec(){
 		var foodPerSec = $player.resources.people.amount.mul(-0.05);
 
-		foodPerSec = foodPerSec.add(upgradeManager.GetUpgrade("food_production").GetValue());
+		foodPerSec = foodPerSec.add(upgradeManager.Get("hunting").DecimalValue);
 
 		$player.resources.food.perSecond = foodPerSec;
+	}
+
+	function CalculateWoodPerSec(){
+		var woodPerSec = new Decimal(0);
+
+		woodPerSec = woodPerSec.add(upgradeManager.Get("wood_chopping").DecimalValue);
+
+		$player.resources.wood.perSecond = woodPerSec;
 	}
 
 	function ResourceTick(res, tick){
@@ -97,7 +113,14 @@
 	}
 
 	function CheckUnlocks(){
-		
+		// prehistoric
+		if ($player.resources.people.amount.gte(2)){
+			$player.resources.food.unlocked = true;
+		}
+
+		if ($player.resources.people.amount.gte(10)){
+			$player.resources.wood.unlocked = true;
+		}
 	}
 
 	function OpenMenu(name){
@@ -168,6 +191,10 @@
 			location.reload();
 		}
 	}
+
+	function GetCurrentEra(){
+		return allAges[$player.currentAge];
+	}
 </script>
 
 <main>
@@ -211,7 +238,7 @@
 
 	<div class="ui segment basic padded">
 		<div class="ui secondary pointing menu stackable">
-			<MenuItem on:click={() => {}} title={allAges[$player.currentAge]} unlocked={true}/>
+			<MenuItem title="💡 Actions" unlocked={$player.menuTabs.actions} on:click={() => OpenMenu("Actions")}/>
 
 			<div class="right menu">
 				<MenuItem title="🏆 Achievements" unlocked={$player.menuTabs.achievements} on:click={() => OpenMenu("Achievements")}/>
@@ -227,16 +254,21 @@
 						<ResourceDisplay resource={$player.resources.money} />
 						<ResourceDisplay resource={$player.resources.people} places={0} />
 						<ResourceDisplay resource={$player.resources.food} />
+						<ResourceDisplay resource={$player.resources.wood} />
 					</div>
 				</div>
-				<!-- Prestige requirements here -->
+				<div class="ui segment">
+					<p>Currently in <b>{GetCurrentEra()}</b> era</p>
+					<ProgressBar/>
+				</div>
 			</div>
 			<div class="twelve wide column">
 				<div class="ui segment basic padded">
-					{#if $player.menu == "Settings"}
+					{#if $player.menu == "Actions"}
+					<ActionsMenu/>
+					{:else if $player.menu == "Settings"}
 					<SettingsMenu/>
 					{/if}
-					<UpgradeButton upgradeRef={upgradeManager.GetUpgrade("food_production")}/>
 				</div>
 			</div>
 		</div>
@@ -272,7 +304,10 @@
 	}
 
 	* {
-		user-select: none;
+		user-select: none !important;
+		-webkit-user-select: none !important;
+		-moz-user-select: none !important;
+		-ms-user-select: none !important;
 	}
 
 </style>
