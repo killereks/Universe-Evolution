@@ -24,25 +24,25 @@ const defaultPlayer = {
 	
 	resources: {
 		money: {
-			icon: "💰",
+			icon: "money",
 			amount: new Decimal(0),
 			perSecond: new Decimal(0),
 			unlocked: false,
 		},
 		people: {
-			icon: "👨‍👩‍👧‍👦",
+			icon: "people",
 			amount: new Decimal(0),
 			perSecond: new Decimal(0),
 			unlocked: true,
 		},
 		food: {
-			icon: "🍲",
+			icon: "food",
 			amount: new Decimal(0),
 			perSecond: new Decimal(0),
 			unlocked: false,
 		},
 		wood: {
-			icon: "🪵",
+			icon: "wood",
 			amount: new Decimal(0),
 			perSecond: new Decimal(0),
 			unlocked: false,

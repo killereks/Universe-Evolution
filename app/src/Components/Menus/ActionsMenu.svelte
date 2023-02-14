@@ -23,10 +23,10 @@
         function CheckColor(){
             let action = $player.actions.current;
 
-            hunt_color = action == "hunt" ? "green" : "grey";
-            explore_color = action == "explore" ? "green" : "grey";
-            collect_resources_color = action == "collect_resources" ? "green" : "grey";
-            train_color = action == "train" ? "green" : "grey";
+            hunt_color = action == "hunt" ? "green" : "basic green";
+            explore_color = action == "explore" ? "green" : "basic green";
+            collect_resources_color = action == "collect_resources" ? "green" : "basic green";
+            train_color = action == "train" ? "green" : "basic green";
         }
 
         CheckColor();
@@ -44,41 +44,37 @@
 
 <div class="ui grid fluid stackable">
     {#if explore_unlocked}
-    <div class="ui eight wide column" transition:fly={{y:50, duration: 150}}>
+    <div class="ui eight wide column" transition:fly|local={{y:50, duration: 150}}>
         <button class="ui fluid button big {explore_color}" on:click={() => SetAction("explore")}>Explore</button>
         <div class="ui horizontal divider hidden"></div>
     </div>
     {/if}
     {#if hunt_unlocked}
-    <div class="ui eight wide column" transition:fly={{y:50, duration: 150}}>
+    <div class="ui eight wide column" transition:fly|local={{y:50, duration: 150}}>
         <button class="ui fluid button big {hunt_color}" on:click={() => SetAction("hunt")}>Hunt</button>
         <div class="ui horizontal divider hidden"></div>
     </div>
     {/if}
     {#if collect_resources_unlocked}
-    <div class="ui eight wide column" transition:fly={{y:50, duration: 150}}>
+    <div class="ui eight wide column" transition:fly|local={{y:50, duration: 150}}>
         <button class="ui fluid button big {collect_resources_color}" on:click={() => SetAction("collect_resources")}>Collect Resources</button>
         <div class="ui horizontal divider hidden"></div>
     </div>
     {/if}
     {#if train_unlocked}
-    <div class="ui eight wide column" transition:fly={{y:50, duration: 150}}>
+    <div class="ui eight wide column" transition:fly|local={{y:50, duration: 150}}>
         <button class="ui fluid button big {train_color}" on:click={() => SetAction("train")}>Train</button>
         <div class="ui horizontal divider hidden"></div>
     </div>
     {/if}
     {#if $player.actions.current != ""}
-    <div class="ui sixteen wide column" transition:fly={{x:50, duration: 150}}>
-        <div class="ui progress small green indicating">
+    <div class="ui sixteen wide column" transition:fly|local={{x:50, duration: 150}}>
+        <div class="ui progress small green indicating inverted">
             <div class="bar" style="width: {actionsPercent}%;"></div>
             <div class="label">{FormatTimeLong(timeLeft)}</div>
         </div>
     </div>
     {/if}
-
-    <div class="ui sixteen wide column">
-        <div class="ui block header">Upgrades</div>
-    </div>
     
     <div class="four wide column">
         <UpgradeButton upgradeRef={upgradeManager.Get("hunting")}/>

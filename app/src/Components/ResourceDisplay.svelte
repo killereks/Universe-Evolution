@@ -1,6 +1,6 @@
 <script>
 
-    import { Format } from "../javascript/Mathf";
+    import { Format, GetIcon } from "../javascript/Mathf";
 
     import { fly } from 'svelte/transition';
     import { backInOut } from 'svelte/easing';
@@ -48,7 +48,7 @@
 
 {#if resource.unlocked}
 <div class="item">
-    <i class="icon">{resource.icon}</i>
+    {@html GetIcon(resource)}
     <div class="content" transition:fly={{x: 100, easing: backInOut}}>
         <div class="ui grid two columns">
             <div class="column">

@@ -44,7 +44,7 @@
 		$player.lastSaved += dt;
 
 		if ($player.lastSaved >= 30){
-			//Save();
+			Save();
 		}
 
 		setTimeout(loop, dt * 1000);
@@ -131,7 +131,7 @@
 	onMount(() => {
 		// don't accidentally overwrite save
 		$player.lastSaved = 0;
-		//Load();
+		Load();
 		OfflineProgress();
 	});
 
@@ -199,19 +199,17 @@
 	
 </script>
 
-<svelte:head>
-	<meta property="og:title" content="Unlock the Secrets of the Universe: Evolve from Cavemen to Intergalactic Conquerors in Universe Evolution">
-	<meta property="og:type" content="website">
-	<meta property="og:image" content="https://i.imgur.com/dejTamj.png">
-	<meta property="og:image:secure_url" content="https://i.imgur.com/dejTamj.png">
-	<meta property="og:image:type" content="image/png">
-	<meta property="og:image:width" content="500">
-	<meta property="og:image:height" content="500">
-	<meta property="og:description" content="Embark on a journey through the ages, from the prehistoric era to the intergalactic future. Gather resources, build your tribe, and upgrade your technology to reach the next age. Play now!">
-	<meta property="og:site_name" content="Idle Game">
-</svelte:head>
-
 <main>
+	<MetaTags
+		title="Unlock the Secrets of the Universe: Evolve from Cavemen to Intergalactic Conquerors in Universe Evolution"
+		description="Embark on a journey through the ages, from the prehistoric era to the intergalactic future. Gather resources, build your tribe, and upgrade your technology to reach the next age. Play now!"
+		openGraph={{
+			images: [{
+				url: "https://i.imgur.com/dejTamj.png"
+			}]
+		}}
+	/>
+
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2/dist/semantic.min.css">
 	
 	<link rel="stylesheet" href="https://raw.githubusercontent.com/silvio-r/spop/gh-pages/dist/spop.min.css">
@@ -220,8 +218,8 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
-	<div class="ui segment">
-		<div class="ui block header">CHEATS</div>
+
+	<div class="ui segment basic inverted">
 		<div class="ui input labeled big">
 			<div class="ui label">Game Speed</div>
 			<input bind:value={game_speed} type="number">
@@ -232,14 +230,14 @@
 
 	{#if offlineProgress.calculating}
 	<div class="custom-modal" transition:fly={{y:-100}}>
-		<div class="ui segment">
+		<div class="ui segment inverted">
 			<div class="ui header">Calculating Offline Progress...</div>
 			<p>
 				While you were offline, our trusty time-travelling historians were working hard to keep your progress up to date. <br>
 				Please wait while they calculate your progress.
 			</p>
 			<div class="content">
-				<div class="ui active progress small green indicating">
+				<div class="ui active progress small green indicating inverted">
 					<div class="bar" style="width: {offlineProgress.percent * 100}%;"></div>
 					<div class="label">{offlineProgress.currentTick} / {$player.settings.offlineTicks} ticks</div>
 				</div>
@@ -249,7 +247,7 @@
 	{/if}
 
 	<div class="ui segment basic padded">
-		<div class="ui secondary pointing menu stackable">
+		<div class="ui secondary menu stackable inverted">
 			<MenuItem title="💡 Actions" unlocked={$player.menuTabs.actions} on:click={() => OpenMenu("Actions")}/>
 
 			<div class="right menu">
@@ -261,7 +259,7 @@
 		</div>
 		<div class="ui grid stackable">
 			<div class="four wide column">
-				<div class="ui segment sticky">
+				<div class="ui segment inverted">
 					<div class="ui relaxed divided big list">
 						<ResourceDisplay resource={$player.resources.money} />
 						<ResourceDisplay resource={$player.resources.people} places={0} />
@@ -269,7 +267,7 @@
 						<ResourceDisplay resource={$player.resources.wood} />
 					</div>
 				</div>
-				<div class="ui segment">
+				<div class="ui segment inverted">
 					<p>Currently in <b>{GetCurrentEra()}</b> era</p>
 					<ProgressBar/>
 				</div>
@@ -291,14 +289,18 @@
 <svelte:window on:keydown={onKeyDown} />
 
 <style global>
-	@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+	@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
 	main {
 		text-align: center;
 	}
 
 	:global(*:not(i)) {
-		font-family: 'Roboto', sans-serif !important;
+		font-family: 'Montserrat', sans-serif !important;
+	}
+
+	:global(body){
+		background-color: #3e3e42 !important;
 	}
 
 	.notifications {

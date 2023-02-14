@@ -1,7 +1,7 @@
 <script>
     import Decimal from "decimal.js";
     import { fly } from "svelte/transition";
-    import {Format, FormatTimeShort} from "../javascript/Mathf"
+    import {Format, FormatTimeShort, GetIcon} from "../javascript/Mathf"
     import {Upgrade} from "../javascript/Upgrades/UpgradeManager";
     import { player } from "../stores/player";
     
@@ -14,7 +14,7 @@
     
     let effectDescription = "";
 
-    let icon = $upgradeRef.CurrentMoney.icon;
+    let icon = GetIcon($upgradeRef.CurrentMoney);
 
     $: {
         canBuy = $upgradeRef.CanBuy();
@@ -23,9 +23,9 @@
         if ($upgradeRef.IsLastLevel()){
             buttonClass = "green";
         } else if (canBuy){
-            buttonClass = "basic green";
+            buttonClass = "green inverted";
         } else {
-            buttonClass = "basic red";
+            buttonClass = "black inverted";
         }
 
         effectDescription = $upgradeRef.GetEffectDescription();
@@ -37,20 +37,12 @@
 
 </script>
 
-<style>
-    .ui.button {
-        border-style: solid;
-        border-width: 1px;
-        height: 100%;
-    }
-</style>
-
 <button class="ui button fluid {buttonClass}" on:click={() => $upgradeRef.TryPurchase()}>
     <p>{$upgradeRef.description}</p>
     {#if $upgradeRef.IsLastLevel()}
     <p transition:fly={{x:200}}>{effectDescription}</p>
     {:else}
-    <p>{Format(currentCost)} {icon}</p>
+    <p>{Format(currentCost)} {@html icon}</p>
     <p><b>{effectDescription}</b></p>
         {#if $player.settings.displayTimeLeft}
             <p>{$upgradeRef.TimeLeft}</p>

@@ -6,8 +6,6 @@
 
 </script>
 
-<div class="ui block header">Settings</div>
-
 <div class="ui grid">
     <div class="row">
         <div class="ui button basic">Last saved: {FormatTimeLong($player.lastSaved)} ago</div>
@@ -33,6 +31,38 @@
         <div class="ui checkbox">
             <input type="checkbox" bind:checked={$player.settings.displayTimeLeft}>
             <label>Display time left on upgrades</label>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="ui block header" style="width: 100%;">Creators & Helpers</div>
+    </div>
+    <div class="row">
+        <div class="ui divider horizontal"></div>
+        <div class="ui card">
+            <div class="image">
+                <img src="https://semantic-ui.com/images/avatar2/large/kristy.png">
+            </div>
+            <div class="content">
+                <a class="header">killereks</a>
+                <div class="description">Programmer & UI Designer</div>
+            </div>
+
+            <a class="ui bottom attached button" href="https://www.oskaroramus.dev" target="_blank"><i class="ui icon external"></i> Open Website</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="ui block header" style="width: 100%;">Stuff stolen from</div>
+    </div>
+    <div class="row">
+        <div class="ui segment inverted">
+            <a href="https://www.flaticon.com/free-icons/population" title="population icons">Population icons created by kosonicon - Flaticon</a>
+            <a href="https://www.flaticon.com/free-icons/food" title="food icons">Food icons created by Freepik - Flaticon</a>
+            <a href="https://www.flaticon.com/free-icons/wood" title="wood icons">Wood icons created by Freepik - Flaticon</a>
+            <a href="https://www.flaticon.com/free-icons/coins" title="coins icons">Coins icons created by Freepik - Flaticon</a>
+
+
         </div>
     </div>
 </div>
